@@ -5,7 +5,7 @@
 int main() {
     std::cout << "sup bitches" << std::endl;
 
-    throw AVMException(AVMException::LEXER, "your code gay", 69);
+    throw AVMException(AVMException::Lexer, "your code gay", 69);
 
     return 0;
 }

@@ -11,8 +11,8 @@ class AVMException : public std::exception {
     std::string info;
 
   public:
-    enum Type { LEXER, PARSER, RUNTIME, _LENGTH };
-    constexpr static const char *const Name[Type::_LENGTH] = {
+    enum Type { Lexer, Parser, Runtime, _Length };
+    constexpr static const char *const Name[Type::_Length] = {
         "Lexer", "Parser", "Runtime"};
 
     AVMException(AVMException::Type type, const std::string &info,
