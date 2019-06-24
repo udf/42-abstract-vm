@@ -26,13 +26,13 @@ SRC_DIR=./srcs/
 BUILD_DIR=./build/
 
 # Files that have a matching .cpp and .hpp
-FILESTEMS=
+FILESTEMS=exceptions
 
 # Plain source files
 SRC_FILES=$(FILESTEMS) main
 
 # Plain headers
-INCLUDE_FILES=$(FILESTEMS) exceptions
+INCLUDE_FILES=$(FILESTEMS)
 
 # --- script kiddies cut here ---
 INCLUDES=$(INCLUDE_FILES:%=$(INCLUDE_DIR)%.$(HEADER_EXT))

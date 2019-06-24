@@ -16,18 +16,8 @@ class AVMException : public std::exception {
         "Lexer", "Parser", "Runtime"};
 
     AVMException(AVMException::Type type, const std::string &info,
-                 int line = -1) {
-        std::string type_name = AVMException::Name[type];
-        this->info = type_name + " error";
-        if (line > 0)
-            this->info += " (line " + std::to_string(line) + ")";
-        this->info += ": " + info;
-    }
+                 int line = -1);
+    ~AVMException();
 
-    ~AVMException() {
-    }
-
-    const char *what() const throw() {
-        return this->info.c_str();
-    }
+    const char *what() const throw();
 };
