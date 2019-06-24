@@ -2,13 +2,6 @@
 #include <exception>
 #include <string>
 
-namespace Exception {
-constexpr const char LEXER[] = "Lexer";
-constexpr const char PARSER[] = "Parse";
-constexpr const char RUNTIME[] = "Runtime";
-} // namespace Exception
-
-template<const char *type>
 class AVMException : public std::exception {
   private:
     AVMException();
@@ -18,13 +11,17 @@ class AVMException : public std::exception {
     std::string info;
 
   public:
-    AVMException(const std::string &info) {
-        this->info = std::string(type) + " error: " + info;
-    }
+    enum Type { LEXER, PARSER, RUNTIME, _LENGTH };
+    constexpr static const char *const Name[Type::_LENGTH] = {
+        "Lexer", "Parser", "Runtime"};
 
-    AVMException(int line, const std::string &info) {
-        this->info = std::string(type) + " error";
-        this->info += " (line " + std::to_string(line) + "): " + info;
+    AVMException(AVMException::Type type, const std::string &info,
+                 int line = -1) {
+        std::string type_name = AVMException::Name[type];
+        this->info = type_name + " error";
+        if (line > 0)
+            this->info += " (line " + std::to_string(line) + ")";
+        this->info += ": " + info;
     }
 
     ~AVMException() {
