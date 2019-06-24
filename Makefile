@@ -32,7 +32,7 @@ FILESTEMS=
 SRC_FILES=$(FILESTEMS) main
 
 # Plain headers
-INCLUDE_FILES=$(FILESTEMS)
+INCLUDE_FILES=$(FILESTEMS) exceptions
 
 # --- script kiddies cut here ---
 INCLUDES=$(INCLUDE_FILES:%=$(INCLUDE_DIR)%.$(HEADER_EXT))
