@@ -1,11 +1,16 @@
 #include <iostream>
 
+#include "OperandFactory.hpp"
 #include "exceptions.hpp"
 
 int main() {
     std::cout << "sup bitches" << std::endl;
 
-    throw AVMException(AVMException::Lexer, "your code gay", 69);
+    OperandFactory factory;
+
+    auto op = factory.createOperand(eOperandType::Double, "69");
+
+    delete op;
 
     return 0;
 }
