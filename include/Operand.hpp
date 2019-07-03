@@ -23,6 +23,8 @@ class Operand : public IOperand {
     std::string str_value;
 
   public:
+    using this_type = Operand<T, ENUM_TYPE>;
+
     Operand() {
     }
 
@@ -74,11 +76,16 @@ class Operand : public IOperand {
     template<template<class, class> class OP>
     IOperand const *operand(IOperand const &rhs) const {
         if (rhs.getPrecision() > this->getPrecision()) {
-            return OP<const IOperand, IOperand const *>()(rhs, *this);
+            // TODO: creating an object just to throw it away is dumb
+            auto tmp = rhs.create_from(this->value);
+            auto ret = OP<const IOperand, IOperand const *>()(*tmp, *this);
+            delete tmp;
+            return ret;
         }
-        T rhs_value = rhs.get_value_as<T>();
-        T out_value = OP<T, T>()(this->value, rhs_value);
-        return new Operand<T, ENUM_TYPE>(out_value);
+        auto casted_rhs = static_cast<decltype(this)>(rhs.clone_as(*this));
+        auto ret = new this_type(OP<T, T>()(this->value, casted_rhs->value));
+        delete casted_rhs;
+        return ret;
     }
 
     IOperand const *operator+(IOperand const &rhs) const override {
@@ -101,11 +108,27 @@ class Operand : public IOperand {
         return this->str_value;
     }
 
-    ~Operand() override {
+    IOperand const *create_from(int8_t value) const override {
+        return new this_type(static_cast<T>(value));
+    }
+    IOperand const *create_from(int16_t value) const override {
+        return new this_type(static_cast<T>(value));
+    }
+    IOperand const *create_from(int32_t value) const override {
+        return new this_type(static_cast<T>(value));
+    }
+    IOperand const *create_from(float value) const override {
+        return new this_type(static_cast<T>(value));
+    }
+    IOperand const *create_from(double value) const override {
+        return new this_type(static_cast<T>(value));
     }
 
-    IOperand::operand_variant get_value() const override {
-        return this->value;
+    IOperand const *clone_as(IOperand const &target) const override {
+        return target.create_from(this->value);
+    }
+
+    ~Operand() override {
     }
 };
 

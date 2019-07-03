@@ -2,6 +2,7 @@
 
 #include "OperandFactory.hpp"
 #include "exceptions.hpp"
+#include "test.hpp"
 
 int main(int argc, char const *argv[]) {
     (void)argc;
@@ -19,6 +20,8 @@ int main(int argc, char const *argv[]) {
     delete result;
     delete op1;
     delete op2;
+
+    test();
 
     return 0;
 }
