@@ -3,7 +3,9 @@
 #include "OperandFactory.hpp"
 #include "exceptions.hpp"
 
-int main() {
+int main(int argc, char const *argv[]) {
+    (void)argc;
+    (void)argv;
     std::cout << "sup bitches" << std::endl;
 
     OperandFactory factory;

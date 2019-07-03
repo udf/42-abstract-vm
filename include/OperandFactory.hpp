@@ -2,6 +2,7 @@
 #include <functional>
 
 #include "IOperand.hpp"
+#include "Operand.hpp"
 
 class OperandFactory {
   private:

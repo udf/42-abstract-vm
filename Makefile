@@ -6,7 +6,7 @@
 #    By: mhoosen <mhoosen@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/01/25 07:39:20 by mhoosen           #+#    #+#              #
-#    Updated: 2019/06/10 21:02:30 by mhoosen          ###   ########.fr        #
+#    Updated: 2019/07/02 12:30:51 by mhoosen          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,7 +32,7 @@ FILESTEMS=exceptions OperandFactory
 SRC_FILES=$(FILESTEMS) main
 
 # Plain headers
-INCLUDE_FILES=$(FILESTEMS) IOperand OperandFactory
+INCLUDE_FILES=$(FILESTEMS) IOperand OperandFactory Operand
 
 # --- script kiddies cut here ---
 INCLUDES=$(INCLUDE_FILES:%=$(INCLUDE_DIR)%.$(HEADER_EXT))
