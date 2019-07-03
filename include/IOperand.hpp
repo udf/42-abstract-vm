@@ -4,14 +4,6 @@
 
 enum eOperandType { Int8, Int16, Int32, Float, Double };
 
-template<typename T>
-struct CastVisitor {
-    template<typename U>
-    T operator()(U value) {
-        return static_cast<T>(value);
-    }
-};
-
 class IOperand {
   public:
     virtual int getPrecision(void) const = 0;
@@ -35,6 +27,8 @@ class IOperand {
 
     template<typename T>
     T get_value_as() const {
-        return std::visit(CastVisitor<T>(), this->get_value());
+        return std::visit(
+            [](auto value) { return static_cast<T>(value); },
+            this->get_value());
     }
 };
