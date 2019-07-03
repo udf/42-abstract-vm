@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstdint>
-#include <iostream>
 #include <string>
 
 #include "IOperand.hpp"
@@ -75,20 +74,14 @@ class Operand : public IOperand {
     template<template<class, class> class OP>
     IOperand const *operand(IOperand const &rhs) const {
         if (rhs.getPrecision() > this->getPrecision()) {
-            std::cout << ENUM_TYPE << " delegate to " << rhs.getType()
-                      << std::endl;
             return OP<const IOperand, IOperand const *>()(rhs, *this);
         }
         T rhs_value = rhs.get_value_as<T>();
-        std::cout << ENUM_TYPE << " str rhs is " << rhs.toString() << std::endl;
-        std::cout << ENUM_TYPE << " casted rhs is " << rhs_value << std::endl;
         T out_value = OP<T, T>()(this->value, rhs_value);
-        std::cout << ENUM_TYPE << " out value is " << out_value << std::endl;
         return new Operand<T, ENUM_TYPE>(out_value);
     }
 
     IOperand const *operator+(IOperand const &rhs) const override {
-        std::cout << ENUM_TYPE << " + op" << std::endl;
         return operand<plus>(rhs);
     }
     IOperand const *operator-(IOperand const &rhs) const override {
@@ -112,7 +105,6 @@ class Operand : public IOperand {
     }
 
     IOperand::operand_variant get_value() const override {
-        std::cout << ENUM_TYPE << " returning " << +this->value << std::endl;
         return this->value;
     }
 };
