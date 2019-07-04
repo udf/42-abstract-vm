@@ -64,20 +64,19 @@ class Operand : public IOperand {
     // that using the factory would bring
     template<template<class, class> class OP>
     IOperand const *operand(IOperand const &rhs) const {
-        IOperand const *lhs_ptr = this;
         IOperand const *rhs_ptr = &rhs;
 
-        if (rhs_ptr->getPrecision() > lhs_ptr->getPrecision()) {
+        if (rhs_ptr->getPrecision() > this->getPrecision()) {
             // make a converted version of ourself of the rhs type
-            lhs_ptr = rhs.create_from(this->value);
+            auto tmp_lhs = rhs.create_from(this->value);
             // make the converted type do the calculation
             // (because we can't know the actual type behind the rhs)
-            auto ret = OP<const IOperand, IOperand const *>()(*lhs_ptr, *this);
-            delete lhs_ptr;
+            auto ret = OP<const IOperand, IOperand const *>()(*tmp_lhs, *this);
+            delete tmp_lhs;
             return ret;
-        } else if (lhs_ptr->getPrecision() > rhs_ptr->getPrecision()) {
+        } else if (this->getPrecision() > rhs_ptr->getPrecision()) {
             // clone the rhs as our type
-            rhs_ptr = rhs.clone_as(*lhs_ptr);
+            rhs_ptr = rhs.clone_as(*this);
         }
 
         // We can safely cast the rhs to our own type because of the above
