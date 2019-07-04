@@ -13,12 +13,6 @@ namespace Operand {
 template<typename T, eOperandType ENUM_TYPE>
 class Operand : public IOperand {
   private:
-    eOperandType calcNewType(IOperand const &rhs) {
-        if (this->getPrecision() > rhs.getPrecision())
-            return this->getType();
-        return rhs.getType();
-    }
-
     T value;
     std::string str_value;
 
