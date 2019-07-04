@@ -13,6 +13,9 @@ namespace Operand {
 template<typename T, eOperandType ENUM_TYPE>
 class Operand : public IOperand {
   private:
+    Operand(const Operand &) = delete;
+    Operand &operator=(const Operand &) = delete;
+
     T value;
     std::string str_value;
 
@@ -47,15 +50,6 @@ class Operand : public IOperand {
         this->str_value = std::to_string(this->value);
     }
 
-    Operand(const Operand &other) {
-        *this = other;
-    }
-
-    Operand &operator=(const Operand &other) {
-        this->value = other.value;
-        this->str_value = other.str_value;
-        return *this;
-    }
 
     int getPrecision(void) const override {
         return static_cast<int>(ENUM_TYPE);
