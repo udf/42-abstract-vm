@@ -75,16 +75,24 @@ class Operand : public IOperand {
 
     template<template<class, class> class OP>
     IOperand const *operand(IOperand const &rhs) const {
-        if (rhs.getPrecision() > this->getPrecision()) {
-            // TODO: creating an object just to throw it away is dumb
-            auto tmp = rhs.create_from(this->value);
-            auto ret = OP<const IOperand, IOperand const *>()(*tmp, *this);
-            delete tmp;
+        IOperand const *lhs_ptr = this;
+        IOperand const *rhs_ptr = &rhs;
+
+        if (rhs_ptr->getPrecision() > lhs_ptr->getPrecision()) {
+            lhs_ptr = rhs.create_from(this->value);
+            auto ret = OP<const IOperand, IOperand const *>()(*lhs_ptr, *this);
+            delete lhs_ptr;
             return ret;
+        } else if (lhs_ptr->getPrecision() > rhs_ptr->getPrecision()) {
+            rhs_ptr = rhs.clone_as(*lhs_ptr);
         }
-        auto casted_rhs = static_cast<decltype(this)>(rhs.clone_as(*this));
+
+        auto casted_rhs = static_cast<decltype(this)>(rhs_ptr);
         auto ret = new this_type(OP<T, T>()(this->value, casted_rhs->value));
-        delete casted_rhs;
+
+        if (rhs_ptr != &rhs)
+            delete rhs_ptr;
+
         return ret;
     }
 
