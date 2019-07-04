@@ -52,7 +52,6 @@ class Operand : public IOperand {
         this->str_value = std::to_string(this->value);
     }
 
-
     int getPrecision(void) const override {
         return static_cast<int>(ENUM_TYPE);
     }
@@ -61,23 +60,32 @@ class Operand : public IOperand {
         return ENUM_TYPE;
     }
 
+    // Base function for operations that avoids the extra (string) allocation
+    // that using the factory would bring
     template<template<class, class> class OP>
     IOperand const *operand(IOperand const &rhs) const {
         IOperand const *lhs_ptr = this;
         IOperand const *rhs_ptr = &rhs;
 
         if (rhs_ptr->getPrecision() > lhs_ptr->getPrecision()) {
+            // make a converted version of ourself of the rhs type
             lhs_ptr = rhs.create_from(this->value);
+            // make the converted type do the calculation
+            // (because we can't know the actual type behind the rhs)
             auto ret = OP<const IOperand, IOperand const *>()(*lhs_ptr, *this);
             delete lhs_ptr;
             return ret;
         } else if (lhs_ptr->getPrecision() > rhs_ptr->getPrecision()) {
+            // clone the rhs as our type
             rhs_ptr = rhs.clone_as(*lhs_ptr);
         }
 
+        // We can safely cast the rhs to our own type because of the above
+        // checks
         auto casted_rhs = static_cast<decltype(this)>(rhs_ptr);
         auto ret = new this_type(OP<T, T>()(this->value, casted_rhs->value));
 
+        // Free the rhs_ptr if we had to clone it
         if (rhs_ptr != &rhs)
             delete rhs_ptr;
 
