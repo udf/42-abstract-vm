@@ -23,12 +23,7 @@ class IOperand {
     using operand_variant =
         std::variant<int8_t, int16_t, int32_t, float, double>;
 
-    virtual operand_variant get_value() const = 0;
-
-    template<typename T>
-    T get_value_as() const {
-        return std::visit(
-            [](auto value) { return static_cast<T>(value); },
-            this->get_value());
-    }
+    virtual operand_variant getValue() const = 0;
+    virtual operand_variant convertVariant(operand_variant value) const = 0;
+    virtual IOperand const *createFromVariant(operand_variant value) const = 0;
 };
