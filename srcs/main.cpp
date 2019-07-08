@@ -7,6 +7,7 @@
 #include "OperandFactory.hpp"
 #include "exceptions.hpp"
 
+// TODO: is lexing just for one line lmao
 auto lex(std::istream &stream) {
     std::vector<Line> lines;
     size_t line_number = 0;
@@ -31,19 +32,20 @@ auto lex(std::istream &stream) {
 
         lexed_line.instruction = matches[1];
 
-        if (matches.size() == 3 && matches[2] != "") {
+        [&] {
+            if (matches.size() != 3 || matches[2] == "")
+                return;
+
             const std::string value = matches[2];
-            if (std::regex_match(value, matches, std::regex("^(\\w+)\\(.+\\)$"))) {
-                lexed_line.value_type = matches[1];
-                lexed_line.value = matches[2];
-            } else {
+            if (!std::regex_match(value, matches, std::regex("^(\\w+)\\(.+\\)$")))
                 throw AVMException(
                     AVMException::Lexer,
                     "Failed to interpret value for instruction",
                     line_number
                 );
-            }
-        }
+            lexed_line.value_type = matches[1];
+            lexed_line.value = matches[2];
+        }();
 
         lines.push_back(lexed_line);
     }
