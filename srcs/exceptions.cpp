@@ -1,7 +1,10 @@
 #include "exceptions.hpp"
 
-AVMException::AVMException(AVMException::Type type, const std::string &info,
-                           int line) {
+AVMException::AVMException(
+    AVMException::Type type,
+    const std::string &info,
+    size_t line
+) {
     std::string type_name = AVMException::Name[type];
     this->info = type_name + " error";
     if (line > 0)

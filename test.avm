@@ -1,0 +1,6 @@
+;comment
+
+exit
+push type(1)
+push type(-1)
+push type(-1.0)

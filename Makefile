@@ -32,7 +32,7 @@ FILESTEMS=exceptions OperandFactory
 SRC_FILES=$(FILESTEMS) main
 
 # Plain headers
-INCLUDE_FILES=$(FILESTEMS) IOperand OperandFactory Operand OperandOps
+INCLUDE_FILES=$(FILESTEMS) IOperand OperandFactory Operand OperandOps AVM
 
 # --- script kiddies cut here ---
 INCLUDES=$(INCLUDE_FILES:%=$(INCLUDE_DIR)%.$(HEADER_EXT))
