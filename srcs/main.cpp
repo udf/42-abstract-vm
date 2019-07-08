@@ -7,14 +7,43 @@
 #include "OperandFactory.hpp"
 #include "exceptions.hpp"
 
-// TODO: is lexing just for one line lmao
-auto lex(std::istream &stream) {
+auto lex(size_t line_number, std::string &line) {
+    Line lexed_line;
+
+    lexed_line.line_number = line_number;
+
+    std::smatch matches;
+    if (!std::regex_match(line, matches, std::regex("^(\\w+) ?(.+)?$")))
+        throw AVMException(
+            AVMException::Lexer, "Failed to interpret line", line_number
+        );
+
+    lexed_line.instruction = matches[1];
+
+    [&] {
+        if (matches.size() != 3 || matches[2] == "")
+            return;
+
+        const std::string value = matches[2];
+        if (!std::regex_match(value, matches, std::regex("^(\\w+)\\(.+\\)$")))
+            throw AVMException(
+                AVMException::Lexer,
+                "Failed to interpret value for instruction",
+                line_number
+            );
+        lexed_line.value_type = matches[1];
+        lexed_line.value = matches[2];
+    }();
+
+    return lexed_line;
+}
+
+auto parse(std::istream &stream) {
+    // TODO: turn lex() output into actual instruction
     std::vector<Line> lines;
-    size_t line_number = 0;
+    size_t line_number = 1;
 
     while (stream.good()) {
-        line_number++;
-        Line lexed_line;
         std::string line;
 
         std::getline(stream, line);
@@ -23,31 +52,8 @@ auto lex(std::istream &stream) {
         if (line.length() == 0 || line[0] == ';')
             continue;
 
-        lexed_line.line_number = line_number;
-        std::smatch matches;
-        if (!std::regex_match(line, matches, std::regex("^(\\w+) ?(.+)?$")))
-            throw AVMException(
-                AVMException::Lexer, "Failed to interpret line", line_number
-            );
-
-        lexed_line.instruction = matches[1];
-
-        [&] {
-            if (matches.size() != 3 || matches[2] == "")
-                return;
-
-            const std::string value = matches[2];
-            if (!std::regex_match(value, matches, std::regex("^(\\w+)\\(.+\\)$")))
-                throw AVMException(
-                    AVMException::Lexer,
-                    "Failed to interpret value for instruction",
-                    line_number
-                );
-            lexed_line.value_type = matches[1];
-            lexed_line.value = matches[2];
-        }();
-
-        lines.push_back(lexed_line);
+        lines.push_back(lex(line_number, line));
+        line_number++;
     }
 
     return lines;
@@ -61,9 +67,9 @@ int main(int argc, char const *argv[]) {
 
     auto lines = [argc, argv] {
         if (argc == 1)
-            return lex(std::cin);
+            return parse(std::cin);
         std::ifstream fstream(argv[1]);
-        return lex(fstream);
+        return parse(fstream);
     }();
 
     for (auto &&line : lines) {
