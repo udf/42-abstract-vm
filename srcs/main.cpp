@@ -8,15 +8,13 @@
 #include "exceptions.hpp"
 
 auto lex(size_t line_number, std::string &line) {
-    Line lexed_line;
+    AVM::Line lexed_line;
 
     lexed_line.line_number = line_number;
 
     std::smatch matches;
     if (!std::regex_match(line, matches, std::regex("^(\\w+) ?(.+)?$")))
-        throw AVMException(
-            AVMException::Lexer, "Failed to interpret line", line_number
-        );
+        throw "Failed to interpret line";
 
     lexed_line.instruction = matches[1];
 
@@ -25,12 +23,8 @@ auto lex(size_t line_number, std::string &line) {
             return;
 
         const std::string value = matches[2];
-        if (!std::regex_match(value, matches, std::regex("^(\\w+)\\(.+\\)$")))
-            throw AVMException(
-                AVMException::Lexer,
-                "Failed to interpret value for instruction",
-                line_number
-            );
+        if (!std::regex_match(value, matches, std::regex("^(\\w+)\\(.+?\\).*$")))
+            throw "Failed to interpret value for instruction";
         lexed_line.value_type = matches[1];
         lexed_line.value = matches[2];
     }();
@@ -38,9 +32,8 @@ auto lex(size_t line_number, std::string &line) {
     return lexed_line;
 }
 
-auto parse(std::istream &stream) {
-    // TODO: turn lex() output into actual instruction
-    std::vector<Line> lines;
+auto read_file(std::istream &stream) {
+    std::vector<AVM::Line> lines;
     size_t line_number = 1;
 
     while (stream.good()) {
@@ -67,20 +60,14 @@ int main(int argc, char const *argv[]) {
 
     auto lines = [argc, argv] {
         if (argc == 1)
-            return parse(std::cin);
+            return read_file(std::cin);
         std::ifstream fstream(argv[1]);
-        return parse(fstream);
+        return read_file(fstream);
     }();
 
-    for (auto &&line : lines) {
-        std::cout << line.line_number << ": " << line.instruction << " "
-                  << line.value_type << "(" << line.value << ")" << std::endl;
-    }
+    AVM avm(lines);
 
-    // AVMState state;
-    // auto instructions = parse(state, tokens);
-
-    // run_machine(instructions);
+    // avm.run();
 
     return 0;
 }
