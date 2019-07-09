@@ -23,7 +23,7 @@ auto lex(size_t line_number, std::string &line) {
             return;
 
         const std::string value = matches[2];
-        if (!std::regex_match(value, matches, std::regex("^(\\w+)\\(.+?\\).*$")))
+        if (!std::regex_match(value, matches, std::regex("^(\\w+)\\((.+?)\\).*$")))
             throw "Failed to interpret value for instruction";
         lexed_line.value_type = matches[1];
         lexed_line.value = matches[2];
