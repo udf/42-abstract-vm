@@ -8,7 +8,6 @@ AVMException::AVMException(
     this->info = info;
     this->type = type;
     this->line = line;
-
     this->build_pretty_info();
 }
 
