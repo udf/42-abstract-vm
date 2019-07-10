@@ -58,6 +58,11 @@ int main(int argc, char const *argv[]) {
         return 1;
     }
 
+    OperandFactory factory;
+
+    auto x = factory.createOperand("int8", "69");
+    delete x;
+
     auto lines = [argc, argv] {
         if (argc == 1)
             return read_file(std::cin);
