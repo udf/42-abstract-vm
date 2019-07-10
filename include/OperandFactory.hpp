@@ -24,6 +24,12 @@ class OperandFactory {
     OperandFactory();
     ~OperandFactory();
 
-    IOperand const *
-    createOperand(eOperandType type, std::string const &value) const;
+    IOperand const *createOperand(
+        eOperandType type,
+        std::string const &value
+    ) const;
+    IOperand const *createOperand(
+        const char *type,
+        std::string const &value
+    ) const;
 };

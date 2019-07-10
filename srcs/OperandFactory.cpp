@@ -16,8 +16,24 @@ OperandFactory::~OperandFactory() {
 
 IOperand const *OperandFactory::createOperand(
     eOperandType type,
-    std::string const &value) const {
+    std::string const &value
+) const {
     return createFuncs[type](*this, value);
+}
+
+IOperand const *OperandFactory::createOperand(
+    const char *type,
+    std::string const &value
+) const {
+    const std::unordered_map<const char *, eOperandType> name_mapping;
+    auto it = name_mapping.find(type);
+    if (it == name_mapping.end()) {
+        throw AVMException(
+            AVMException::Internal,
+            "Unknown operand type"
+        );
+    }
+    return this->createOperand((*it).first, value);
 }
 
 IOperand const *OperandFactory::createInt8(std::string const &value) const {
