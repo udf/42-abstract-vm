@@ -26,6 +26,9 @@ class AVMException : public std::exception {
     AVMException(const AVMException &other);
     AVMException &operator=(const AVMException &other);
 
+    void change_type(AVMException::Type new_type);
+    void build_pretty_info();
+
     std::string info;
     std::string pretty_info;
     AVMException::Type type;
