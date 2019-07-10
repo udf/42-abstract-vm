@@ -25,7 +25,7 @@ IOperand const *OperandFactory::createOperand(
     const char *type,
     std::string const &value
 ) const {
-    const std::unordered_map<const char *, eOperandType> name_mapping({
+    static const std::unordered_map<const char *, eOperandType> name_mapping({
         {"int8", Int8},
         {"int16", Int16},
         {"int32", Int32},
