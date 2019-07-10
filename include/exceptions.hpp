@@ -3,13 +3,6 @@
 #include <string>
 
 class AVMException : public std::exception {
-  private:
-    AVMException();
-    AVMException(const AVMException &other);
-    AVMException &operator=(const AVMException &other);
-
-    std::string info;
-
   public:
     enum Type { Lexer, Parser, Runtime, Internal, _Length };
     constexpr static const char *const Name[Type::_Length] = {
@@ -27,4 +20,14 @@ class AVMException : public std::exception {
     ~AVMException();
 
     const char *what() const throw();
+
+  private:
+    AVMException();
+    AVMException(const AVMException &other);
+    AVMException &operator=(const AVMException &other);
+
+    std::string info;
+    std::string pretty_info;
+    AVMException::Type type;
+    size_t line;
 };

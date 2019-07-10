@@ -5,16 +5,19 @@ AVMException::AVMException(
     const std::string &info,
     size_t line
 ) {
-    std::string type_name = AVMException::Name[type];
-    this->info = type_name + " error";
+    this->info = info;
+    this->type = type;
+    this->line = line;
+
+    this->pretty_info = std::string(AVMException::Name[type]) + " error";
     if (line > 0)
-        this->info += " (line " + std::to_string(line) + ")";
-    this->info += ": " + info;
+        this->pretty_info += " (line " + std::to_string(line) + ")";
+    this->pretty_info += ": " + info;
 }
 
 AVMException::~AVMException() {
 }
 
 const char *AVMException::what() const throw() {
-    return this->info.c_str();
+    return this->pretty_info.c_str();
 }
