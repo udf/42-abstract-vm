@@ -14,6 +14,6 @@ void AVM::exit() {
     this->exit_flag = true;
 }
 
-void AVM::push(std::unique_ptr<IOperand const> &v) {
-    this->stack.push_back(std::unique_ptr<IOperand const>((*v).clone()));
+void AVM::push(operand_uptr &v) {
+    this->stack.push_back(operand_uptr((*v).clone()));
 }

@@ -12,13 +12,15 @@ class AVM {
     AVM(const AVM &other) = delete;
     AVM &operator=(const AVM &other) = delete;
 
-    std::vector<std::unique_ptr<IOperand const>> stack;
+    using operand_uptr = std::unique_ptr<IOperand const>;
+
+    std::vector<operand_uptr> stack;
     bool exit_flag = false;
 
   public:
     // TODO: make these private
     void exit();
-    void push(std::unique_ptr<IOperand const> &v);
+    void push(operand_uptr &v);
 
     // instruction value_type(value)
     struct Line {
