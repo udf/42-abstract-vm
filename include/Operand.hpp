@@ -126,6 +126,10 @@ class Operand : public IOperand {
     IOperand const *createFromVariant(operand_variant value) const override {
         return new this_type(std::get<T>(value));
     }
+
+    IOperand const *clone() const override {
+        return new this_type(this->value);
+    }
 };
 
 using Int8 = Operand<int8_t, eOperandType::Int8>;

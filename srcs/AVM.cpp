@@ -9,3 +9,11 @@ AVM::AVM(std::vector<Line> &lines) {
 
 AVM::~AVM() {
 }
+
+void AVM::exit() {
+    this->exit_flag = true;
+}
+
+void AVM::push(std::unique_ptr<IOperand const> &v) {
+    this->stack.push_back(std::unique_ptr<IOperand const>((*v).clone()));
+}

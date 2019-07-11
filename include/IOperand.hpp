@@ -26,4 +26,5 @@ class IOperand {
     virtual operand_variant getValue() const = 0;
     virtual operand_variant convertVariant(operand_variant value) const = 0;
     virtual IOperand const *createFromVariant(operand_variant value) const = 0;
+    virtual IOperand const *clone() const = 0;
 };
