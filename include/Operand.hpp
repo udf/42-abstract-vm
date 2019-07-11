@@ -120,7 +120,11 @@ class Operand : public IOperand {
 
     operand_variant convertVariant(operand_variant value) const override {
         return std::visit(
-            [](auto value) { return static_cast<T>(value); }, value);
+            [](auto value) {
+                return static_cast<T>(value);
+            },
+            value
+        );
     }
 
     IOperand const *createFromVariant(operand_variant value) const override {
