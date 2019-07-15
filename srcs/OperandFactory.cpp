@@ -26,7 +26,7 @@ IOperand const *OperandFactory::createOperand(
     eOperandType type,
     std::string const &value
 ) const {
-    return createFuncs[type](*this, value);
+    return (this->*createFuncs[type])(value);
 }
 
 IOperand const *OperandFactory::createOperand(

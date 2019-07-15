@@ -1,5 +1,5 @@
 #pragma once
-#include <functional>
+#include <unordered_map>
 
 #include "IOperand.hpp"
 #include "Operand.hpp"
@@ -15,8 +15,7 @@ class OperandFactory {
     IOperand const *createFloat(std::string const &value) const;
     IOperand const *createDouble(std::string const &value) const;
 
-    using createOperandFunc = std::function<
-        IOperand const *(const OperandFactory &, std::string const &)>;
+    using createOperandFunc = decltype(&OperandFactory::createInt8);
 
     static const createOperandFunc createFuncs[];
 
