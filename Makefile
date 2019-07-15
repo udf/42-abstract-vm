@@ -6,7 +6,7 @@
 #    By: sam <sam@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/01/25 07:39:20 by mhoosen           #+#    #+#              #
-#    Updated: 2019/07/09 14:22:51 by sam              ###   ########.fr        #
+#    Updated: 2019/07/15 14:49:43 by sam              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,8 @@ HEADER_EXT=hpp
 SRC_EXT=cpp
 
 CXX=clang++
-CFLAGS=-Wall -Wextra -Werror -Wconversion --std=c++17
+# TODO: Remove debug flag
+CFLAGS=-Wall -Wextra -Werror -Wconversion --std=c++17 -g
 LIB_FLAGS=
 
 # Paths (with trailing /)
