@@ -8,6 +8,14 @@ const OperandFactory::createOperandFunc OperandFactory::createFuncs[] = {
     &OperandFactory::createDouble,
 };
 
+decltype(OperandFactory::name_mapping) OperandFactory::name_mapping({
+    {"int8", Int8},
+    {"int16", Int16},
+    {"int32", Int32},
+    {"float", Float},
+    {"double", Double},
+});
+
 OperandFactory::OperandFactory() {
 }
 
@@ -25,13 +33,6 @@ IOperand const *OperandFactory::createOperand(
     const char *type,
     std::string const &value
 ) const {
-    static const std::unordered_map<const char *, eOperandType> name_mapping({
-        {"int8", Int8},
-        {"int16", Int16},
-        {"int32", Int32},
-        {"float", Float},
-        {"double", Double},
-    });
     auto it = name_mapping.find(type);
     if (it == name_mapping.end()) {
         throw AVMException(

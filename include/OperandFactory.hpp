@@ -20,6 +20,8 @@ class OperandFactory {
 
     static const createOperandFunc createFuncs[];
 
+    static const std::unordered_map<const char *, eOperandType> name_mapping;
+
   public:
     OperandFactory();
     ~OperandFactory();
