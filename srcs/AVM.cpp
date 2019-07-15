@@ -4,7 +4,7 @@ decltype(AVM::instr_defs) AVM::instr_defs({
     {"push", {&AVM::push, true}},
     {"pop", {&AVM::pop, false}},
     {"dump", {&AVM::dump, false}},
-    {"assert",{ &AVM::assert, false}},
+    {"assert", {&AVM::assert, false}},
     {"add", {&AVM::add, false}},
     {"sub", {&AVM::sub, false}},
     {"mul", {&AVM::mul, false}},
