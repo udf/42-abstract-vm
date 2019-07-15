@@ -60,6 +60,7 @@ AVM::AVM(std::vector<Line> &lines) {
 AVM::~AVM() {
 }
 
+// TODO: move these to an instructions cpp file
 void AVM::push() {
     this->stack.push_back(operand_uptr(instr_arg->clone()));
 }
