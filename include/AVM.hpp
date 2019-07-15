@@ -86,4 +86,6 @@ class AVM {
 
     AVM(std::vector<Line> &lines);
     ~AVM();
+
+    void run();
 };

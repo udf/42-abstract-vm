@@ -58,21 +58,20 @@ int main(int argc, char const *argv[]) {
         return 1;
     }
 
-    OperandFactory factory;
+    try {
+        auto lines = [argc, argv] {
+            if (argc == 1)
+                return read_file(std::cin);
+            std::ifstream fstream(argv[1]);
+            return read_file(fstream);
+        }();
 
-    auto x = factory.createOperand("int8", "69");
-    delete x;
+        AVM avm(lines);
 
-    auto lines = [argc, argv] {
-        if (argc == 1)
-            return read_file(std::cin);
-        std::ifstream fstream(argv[1]);
-        return read_file(fstream);
-    }();
-
-    AVM avm(lines);
-
-    // avm.run();
+        avm.run();
+    } catch (AVMException &e) {
+        std::cerr << "Yo dawg, some shit fucked up: " << e.what() << std::endl;
+    }
 
     return 0;
 }

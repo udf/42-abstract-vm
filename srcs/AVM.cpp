@@ -19,7 +19,6 @@ decltype(AVM::factory) AVM::factory = OperandFactory();
 AVM::AVM(std::vector<Line> &lines) {
     // Parse the lines into memes
     for (auto &&line : lines) {
-        std::cout << "|" << line.instruction << "|" << std::endl;
         auto it = instr_defs.find(line.instruction.c_str());
         if (it == instr_defs.end()) {
             throw AVMException(
@@ -58,6 +57,13 @@ AVM::AVM(std::vector<Line> &lines) {
 }
 
 AVM::~AVM() {
+}
+
+void AVM::run() {
+    for (auto &&instruction : this->instructions) {
+        this->instr_arg = instruction.arg.get();
+        (this->*instruction.func)();
+    }
 }
 
 // TODO: move these to an instructions cpp file

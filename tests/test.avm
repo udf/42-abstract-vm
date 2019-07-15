@@ -1,6 +1,7 @@
 ;comment
 
+push int8(1)
+push float(-1)
+push int8(-1.0)
+
 exit
-push type(1)
-push type(-1)
-push type(-1.0)
