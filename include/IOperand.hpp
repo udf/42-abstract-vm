@@ -2,7 +2,15 @@
 #include <string>
 #include <variant>
 
-enum eOperandType { Int8, Int16, Int32, Float, Double };
+enum eOperandType { Int8, Int16, Int32, Float, Double, _Length };
+
+static const char *sOperandName[eOperandType::_Length] = {
+    "int8",
+    "int16",
+    "int32",
+    "float",
+    "double"
+};
 
 class IOperand {
   public:
