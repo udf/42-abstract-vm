@@ -28,7 +28,6 @@ AVM::AVM(std::vector<Line> &lines) {
             );
         }
 
-        // TODO: check if this is doing a copy
         const InstrDef &func = it->second;
         bool line_has_arg = !line.value.empty();
 
@@ -43,6 +42,7 @@ AVM::AVM(std::vector<Line> &lines) {
         }
 
         if (!func.needs_arg) {
+            // TODO: make a constructor and use emplace_back
             this->instructions.push_back({func.func, nullptr});
             continue;
         }
