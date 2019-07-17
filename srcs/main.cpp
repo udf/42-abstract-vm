@@ -7,7 +7,13 @@
 #include "OperandFactory.hpp"
 #include "exceptions.hpp"
 
+// TODO: make this a function in the AVM class
 auto lex(size_t line_number, std::string &line) {
+    // TODO: Three stage parser:
+    // - tokenizer
+    // - parser (tokens to {instruction + optional arg})
+    // - "compiler" ({instruction + arg} to {fptr + environment})
+    // TOD: parser that doesnt abuse regex too much
     AVM::Line lexed_line;
 
     lexed_line.line_number = line_number;
