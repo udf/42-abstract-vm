@@ -2,7 +2,13 @@
 #include <exception>
 #include <string>
 
-enum eAVMException { Lexer, Parser, Runtime, Internal, eAVMException_MAX };
+enum eAVMException {
+    Lexer,
+    Parser,
+    Runtime,
+    Internal,
+    eAVMException_MAX
+};
 
 class AVMException : public std::exception {
   public:
