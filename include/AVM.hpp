@@ -46,13 +46,17 @@ class AVM {
 
     static const std::unordered_map<std::string, InstrDef> instr_defs;
 
-    IOperand const *instr_arg = nullptr;
-
     struct ParsedInstruction {
+        struct Environment {
+            operand_uptr arg;
+            size_t line_number;
+        };
+
         instr_fptr func;
-        operand_uptr arg;
+        Environment env;
     };
 
+    ParsedInstruction::Environment const *instr_env = nullptr;
     std::vector<ParsedInstruction> instructions;
 
   public:

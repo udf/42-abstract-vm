@@ -37,7 +37,9 @@ AVM::AVM(std::vector<Line> &lines) {
 
         if (!func.needs_arg) {
             // TODO: make a constructor and use emplace_back
-            this->instructions.push_back({func.func, nullptr});
+            this->instructions.push_back(
+                {func.func, {nullptr, line.line_number}}
+            );
             continue;
         }
 
@@ -46,7 +48,9 @@ AVM::AVM(std::vector<Line> &lines) {
             line.value_type.c_str(),
             line.value
         ));
-        this->instructions.push_back({func.func, std::move(arg)});
+        this->instructions.push_back(
+            {func.func, {std::move(arg), line.line_number}}
+        );
     }
 }
 
@@ -54,10 +58,14 @@ AVM::~AVM() {
 }
 
 void AVM::run() {
-    // TODO: store line number in instruction struct and rethrow with line number
     for (auto &&instruction : this->instructions) {
-        this->instr_arg = instruction.arg.get();
-        (this->*instruction.func)();
+        this->instr_env = &instruction.env;
+        try {
+            (this->*instruction.func)();
+        } catch (AVMException &e) {
+            e.set_line(instruction.env.line_number);
+            throw;
+        }
     }
 }
 
@@ -81,7 +89,9 @@ void AVM::do_binary_op(F f) {
 }
 
 void AVM::push() {
-    this->stack.push_back(operand_uptr(instr_arg->clone()));
+    this->stack.push_back(
+        operand_uptr(instr_env->arg->clone())
+    );
 }
 
 void AVM::pop() {
