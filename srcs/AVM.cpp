@@ -35,22 +35,17 @@ AVM::AVM(std::vector<Line> &lines) {
             throw AVMException(Parser, info).set_line(line.line_number);
         }
 
-        if (!func.needs_arg) {
-            // TODO: make a constructor and use emplace_back
-            this->instructions.push_back(
-                {func.func, {nullptr, line.line_number}}
-            );
-            continue;
+        ParsedInstruction instr;
+        instr.func = func.func;
+        instr.env.line_number = line.line_number;
+        if (func.needs_arg) {
+            // TODO: rethrow internal exception
+            instr.env.arg = operand_uptr(this->factory.createOperand(
+                line.value_type.c_str(),
+                line.value
+            ));
         }
-
-        // TODO: rethrow internal exception
-        operand_uptr arg = operand_uptr(this->factory.createOperand(
-            line.value_type.c_str(),
-            line.value
-        ));
-        this->instructions.push_back(
-            {func.func, {std::move(arg), line.line_number}}
-        );
+        this->instructions.push_back(instr);
     }
 }
 
