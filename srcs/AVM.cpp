@@ -80,7 +80,6 @@ void AVM::do_binary_op(F f) {
     this->stack.push_back(operand_uptr(result));
 }
 
-// TODO: move these to an instructions cpp file
 void AVM::push() {
     this->stack.push_back(operand_uptr(instr_arg->clone()));
 }
