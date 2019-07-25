@@ -2,7 +2,14 @@
 #include <string>
 #include <variant>
 
-enum eOperandType { Int8, Int16, Int32, Float, Double, eOperandTypeMAX };
+enum eOperandType {
+    Int8,
+    Int16,
+    Int32,
+    Float,
+    Double,
+    eOperandTypeMAX
+};
 
 static const char *sOperandName[eOperandTypeMAX] = {
     "int8",
