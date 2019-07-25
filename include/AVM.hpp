@@ -22,25 +22,8 @@ class AVM {
     std::vector<operand_uptr> stack;
     bool exit_flag = false;
 
-    // TODO: move this definition to cpp
     template<typename F>
-    void do_binary_op(F f = F()) {
-        if (this->stack.size() < 2) {
-            throw AVMException(
-                Runtime,
-                "binary operation with less than two values on the stack"
-            );
-        }
-
-        auto left = std::move(this->stack.back());
-        this->stack.pop_back();
-
-        auto right = std::move(this->stack.back());
-        this->stack.pop_back();
-
-        auto result = f(*left.get(), *right.get());
-        this->stack.push_back(operand_uptr(result));
-    }
+    void do_binary_op(F f = F());
 
     void push();
     void pop();

@@ -61,6 +61,25 @@ void AVM::run() {
     }
 }
 
+template<typename F>
+void AVM::do_binary_op(F f) {
+    if (this->stack.size() < 2) {
+        throw AVMException(
+            Runtime,
+            "binary operation with less than two values on the stack"
+        );
+    }
+
+    auto left = std::move(this->stack.back());
+    this->stack.pop_back();
+
+    auto right = std::move(this->stack.back());
+    this->stack.pop_back();
+
+    auto result = f(*left.get(), *right.get());
+    this->stack.push_back(operand_uptr(result));
+}
+
 // TODO: move these to an instructions cpp file
 void AVM::push() {
     this->stack.push_back(operand_uptr(instr_arg->clone()));
