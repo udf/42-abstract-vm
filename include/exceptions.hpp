@@ -2,35 +2,40 @@
 #include <exception>
 #include <string>
 
+enum eAVMException { Lexer, Parser, Runtime, Internal, eAVMException_MAX };
+
 class AVMException : public std::exception {
   public:
-    enum Type { Lexer, Parser, Runtime, Internal, _Length };
-    constexpr static const char *const Name[Type::_Length] = {
+    constexpr static const char *const TypeName[eAVMException_MAX] = {
       "Lexer",
       "Parser",
       "Runtime",
       "Internal"
     };
 
-    AVMException(
-        AVMException::Type type,
-        const std::string &info,
-        size_t line = 0
-    );
+    AVMException(eAVMException type, std::string info);
+    AVMException(const AVMException &other);
     ~AVMException();
+
+    AVMException &set_type(eAVMException type);
+    AVMException &set_info(std::string info);
+    AVMException &set_line(size_t line);
+    AVMException &set_column(size_t column);
+    AVMException &set_hint(std::string hint);
 
     const char *what() const throw();
 
   private:
     AVMException();
-    AVMException(const AVMException &other);
     AVMException &operator=(const AVMException &other);
 
-    void change_type(AVMException::Type new_type);
     void build_pretty_info();
 
-    std::string info;
     std::string pretty_info;
-    AVMException::Type type;
-    size_t line;
+
+    eAVMException type;
+    std::string info;
+    size_t line = 0;
+    size_t column = 0;
+    std::string hint;
 };

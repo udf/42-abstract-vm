@@ -1,33 +1,71 @@
 #include "exceptions.hpp"
 
 AVMException::AVMException(
-    AVMException::Type type,
-    const std::string &info,
-    size_t line
+    eAVMException type,
+    const std::string info
 ) {
-    this->info = info;
     this->type = type;
-    this->line = line;
+    this->info = info;
     this->build_pretty_info();
 }
 
+AVMException::AVMException(const AVMException &other) {
+    this->pretty_info = other.pretty_info;
+    this->type = other.type;
+    this->info = other.info;
+    this->line = other.line;
+    this->column = other.column;
+    this->hint = other.hint;
+}
+
 AVMException::~AVMException() {
+}
+
+AVMException &AVMException::set_type(eAVMException type) {
+    this->type = type;
+    this->build_pretty_info();
+    return *this;
+}
+
+AVMException &AVMException::set_info(std::string info) {
+    this->info = info;
+    this->build_pretty_info();
+    return *this;
+}
+
+AVMException &AVMException::set_line(size_t line) {
+    this->line = line;
+    this->build_pretty_info();
+    return *this;
+}
+
+AVMException &AVMException::set_column(size_t column) {
+    this->column = column;
+    this->build_pretty_info();
+    return *this;
+}
+
+AVMException &AVMException::set_hint(std::string hint) {
+    this->hint = hint;
+    this->build_pretty_info();
+    return *this;
 }
 
 const char *AVMException::what() const throw() {
     return this->pretty_info.c_str();
 }
 
-void AVMException::change_type(AVMException::Type new_type) {
-    if (this->type == new_type)
-        return;
-    this->type = new_type;
-    this->build_pretty_info();
-}
-
+// {type} error [on line {line}[, column {column}]]: info "{hint}"
 void AVMException::build_pretty_info() {
-    this->pretty_info = std::string(AVMException::Name[type]) + " error";
-    if (line > 0)
-        this->pretty_info += " (line " + std::to_string(line) + ")";
-    this->pretty_info += ": " + info;
+    this->pretty_info = std::string(this->TypeName[this->type]) + " error";
+    if (this->line) {
+        this->pretty_info += " on line " + std::to_string(this->line);
+        if (this->column) {
+            this->pretty_info += ", column " + std::to_string(this->column);
+        }
+    }
+    this->pretty_info += ": " + this->info;
+    if (!this->hint.empty()) {
+        this->pretty_info += '"' + this->hint + '"';
+    }
 }

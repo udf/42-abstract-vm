@@ -21,24 +21,18 @@ AVM::AVM(std::vector<Line> &lines) {
     for (auto &&line : lines) {
         auto it = instr_defs.find(line.instruction.c_str());
         if (it == instr_defs.end()) {
-            throw AVMException(
-                AVMException::Parser,
-                "Unknown instruction",
-                line.line_number
-            );
+            throw AVMException(Parser, "Unknown instruction")
+                .set_line(line.line_number);
         }
 
         const InstrDef &func = it->second;
         bool line_has_arg = !line.value.empty();
 
         if (func.needs_arg != line_has_arg) {
-            throw AVMException(
-                AVMException::Parser,
-                func.needs_arg 
-                    ? "Instruction needs an argument but none was provided"
-                    : "Instruction takes no arguments but one was provided",
-                line.line_number
-            );
+            const char *info = func.needs_arg
+                ? "Instruction needs an argument but none was provided"
+                : "Instruction takes no arguments but one was provided";
+            throw AVMException(Parser, info).set_line(line.line_number);
         }
 
         if (!func.needs_arg) {
@@ -60,6 +54,7 @@ AVM::~AVM() {
 }
 
 void AVM::run() {
+    // TODO: store line number in instruction struct and rethrow with line number
     for (auto &&instruction : this->instructions) {
         this->instr_arg = instruction.arg.get();
         (this->*instruction.func)();
@@ -73,11 +68,7 @@ void AVM::push() {
 
 void AVM::pop() {
     if (this->stack.empty())
-        throw AVMException(
-            AVMException::Runtime,
-            "pop on empty stack",
-            0 // TODO: use environment struct instead of a single arg
-        );
+        throw AVMException(Runtime, "pop on empty stack");
     this->stack.pop_back();
 }
 
@@ -96,7 +87,7 @@ void AVM::dump() {
 }
 
 void AVM::assert() {
-    throw AVMException(AVMException::Runtime, "implement this");
+    throw AVMException(Runtime, "implement this");
 }
 
 void AVM::add() {
@@ -121,10 +112,10 @@ void AVM::mod() {
 
 void AVM::print() {
     if (this->stack.size() < 1)
-        throw AVMException(AVMException::Runtime, "print on empty stack");
+        throw AVMException(Runtime, "print on empty stack");
     auto item = this->stack.back().get();
     if (item->getType() != Int8)
-        throw AVMException(AVMException::Runtime, "print on non int8 variable");
+        throw AVMException(Runtime, "print on non int8 variable");
     // TODO: figure out a way to directly use the type of an Int8 instead of respecifying it
     auto value = std::get<int8_t>(item->getValue());
     std::cout << static_cast<char>(value);

@@ -27,9 +27,8 @@ class AVM {
     void do_binary_op(F f = F()) {
         if (this->stack.size() < 2) {
             throw AVMException(
-                AVMException::Runtime,
-                "binary operation with less than two values on the stack",
-                0 // TODO: environment shit thanks
+                Runtime,
+                "binary operation with less than two values on the stack"
             );
         }
 

@@ -17,11 +17,11 @@ V var_op(const V &x, const V &y, F f = F()) {
             if constexpr (std::is_same_v<decltype(x), decltype(y)>) {
                 return f(x, y);
             }
-            throw AVMException(
-                AVMException::Runtime, "This should never happen");
+            throw AVMException(Internal, "This should never happen");
         },
         x,
-        y);
+        y
+    );
 }
 
 template<typename T, eOperandType ENUM_TYPE>
@@ -58,9 +58,8 @@ class Operand : public IOperand {
                 this->value = static_cast<T>(value);
             }
         } catch (const std::out_of_range &e) {
-            std::string error_info =
-                "Invalid value for operand: \"" + str + "\"";
-            throw AVMException(AVMException::Runtime, error_info);
+            throw AVMException(Internal, "Invalid value for operand: ")
+                .set_hint(str);
         }
 
         this->str_value = std::to_string(this->value);
