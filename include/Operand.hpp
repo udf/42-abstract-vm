@@ -1,5 +1,6 @@
 #pragma once
 
+#include <type_traits>
 #include <cstdint>
 #include <string>
 
@@ -10,11 +11,38 @@
 
 namespace Operand {
 
+template<typename T, eOperandType ENUM_TYPE>
+class Operand;
+
+using Int8 = Operand<int8_t, eOperandType::Int8>;
+using Int16 = Operand<int16_t, eOperandType::Int16>;
+using Int32 = Operand<int32_t, eOperandType::Int32>;
+using Float = Operand<float, eOperandType::Float>;
+using Double = Operand<double, eOperandType::Double>;
+
+template<typename T, typename... Ts>
+constexpr bool is_one_of_vt() {
+    return std::disjunction_v<std::is_same<T, typename Ts::value_type>...>;
+}
+
 template<typename F, typename V>
 V var_op(const V &x, const V &y, F f = F()) {
     return std::visit(
         [&f](auto x, auto y) -> V {
-            if constexpr (std::is_same_v<decltype(x), decltype(y)>) {
+            using x_t = decltype(x);
+
+            if constexpr (std::is_same_v<x_t, decltype(y)>) {
+                if constexpr (is_one_of_vt<x_t, Int8, Int16, Int32>()) {
+                    int64_t result = f(
+                        static_cast<int64_t>(x),
+                        static_cast<int64_t>(y)
+                    );
+                    if (result > std::numeric_limits<x_t>::max())
+                        throw AVMException(Internal, "Overflow");
+                    if (result < std::numeric_limits<x_t>::min())
+                        throw AVMException(Internal, "Underflow");
+                    return static_cast<x_t>(result);
+                }
                 return f(x, y);
             }
             throw AVMException(Internal, "This should never happen");
@@ -34,6 +62,7 @@ class Operand : public IOperand {
     std::string str_value;
 
   public:
+    using value_type = T;
     using this_type = Operand<T, ENUM_TYPE>;
 
     Operand() {
@@ -134,11 +163,5 @@ class Operand : public IOperand {
         return new this_type(this->value);
     }
 };
-
-using Int8 = Operand<int8_t, eOperandType::Int8>;
-using Int16 = Operand<int16_t, eOperandType::Int16>;
-using Int32 = Operand<int32_t, eOperandType::Int32>;
-using Float = Operand<float, eOperandType::Float>;
-using Double = Operand<double, eOperandType::Double>;
 
 } // namespace Operand
