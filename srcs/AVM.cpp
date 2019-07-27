@@ -80,13 +80,11 @@ void AVM::do_binary_op(F f) {
     this->stack.pop_back();
 
     auto result = f(*left.get(), *right.get());
-    this->stack.push_back(operand_uptr(result));
+    this->stack.emplace_back(result);
 }
 
 void AVM::push() {
-    this->stack.push_back(
-        operand_uptr(instr_env->arg->clone())
-    );
+    this->stack.emplace_back(instr_env->arg->clone());
 }
 
 void AVM::pop() {
