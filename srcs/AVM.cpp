@@ -35,7 +35,8 @@ AVM::AVM(std::vector<Line> &lines) {
             throw AVMException(Parser, info).set_line(line.line_number);
         }
 
-        ParsedInstruction instr;
+        this->instructions.emplace_back();
+        ParsedInstruction &instr = this->instructions.back();
         instr.func = func.func;
         instr.env.line_number = line.line_number;
         if (func.needs_arg) {
@@ -45,7 +46,6 @@ AVM::AVM(std::vector<Line> &lines) {
                 line.value
             ));
         }
-        this->instructions.push_back(instr);
     }
 }
 
