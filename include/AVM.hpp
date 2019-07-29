@@ -15,9 +15,11 @@ class AVM {
     AVM(const AVM &other) = delete;
     AVM &operator=(const AVM &other) = delete;
 
+    // Internal functions
     template<typename F>
     void do_binary_op(F f = F());
 
+    // Instructions
     void push();
     void pop();
     void dump();
@@ -30,14 +32,17 @@ class AVM {
     void print();
     void exit();
 
-    using instr_fptr = decltype(&AVM::exit);
-    using operand_uptr = std::unique_ptr<IOperand const>;
+    // Parser data
+    static const OperandFactory factory;
 
+    using instr_fptr = decltype(&AVM::exit);
     struct InstrDef {
         instr_fptr func;
         bool needs_arg;
     };
+    static const std::unordered_map<std::string, InstrDef> instr_defs;
 
+    using operand_uptr = std::unique_ptr<IOperand const>;
     struct ParsedInstruction {
         struct Environment {
             operand_uptr arg;
@@ -48,17 +53,14 @@ class AVM {
         Environment env;
     };
 
-    static const std::unordered_map<std::string, InstrDef> instr_defs;
-    static const OperandFactory factory;
+    std::vector<ParsedInstruction> instructions;
 
+    // Runtime data
+    ParsedInstruction::Environment const *instr_env = nullptr;
     std::vector<operand_uptr> stack;
     bool exit_flag = false;
 
-    ParsedInstruction::Environment const *instr_env = nullptr;
-    std::vector<ParsedInstruction> instructions;
-
   public:
-
     // instruction value_type(value)
     struct Line {
         size_t line_number;
