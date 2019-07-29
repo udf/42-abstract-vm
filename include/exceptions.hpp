@@ -20,6 +20,7 @@ class AVMException : public std::exception {
     };
 
     AVMException(eAVMException type, std::string info);
+    AVMException(std::string info);
     AVMException(const AVMException &other);
     ~AVMException();
 

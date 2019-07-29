@@ -38,14 +38,14 @@ V var_op(const V &x, const V &y, F f = F()) {
                         static_cast<int64_t>(y)
                     );
                     if (result > std::numeric_limits<x_t>::max())
-                        throw AVMException(Internal, "Overflow");
+                        throw AVMException("Overflow");
                     if (result < std::numeric_limits<x_t>::min())
-                        throw AVMException(Internal, "Underflow");
+                        throw AVMException("Underflow");
                     return static_cast<x_t>(result);
                 }
                 return f(x, y);
             }
-            throw AVMException(Internal, "This should never happen");
+            throw AVMException("This should never happen");
         },
         x,
         y
@@ -87,7 +87,7 @@ class Operand : public IOperand {
                 this->value = static_cast<T>(value);
             }
         } catch (const std::out_of_range &e) {
-            throw AVMException(Internal, "Invalid value for operand:")
+            throw AVMException("Invalid value for operand:")
                 .set_hint(str);
         }
 

@@ -9,6 +9,12 @@ AVMException::AVMException(
     this->build_pretty_info();
 }
 
+AVMException::AVMException(
+    const std::string info
+) : AVMException(Internal, info)
+{
+}
+
 AVMException::AVMException(const AVMException &other) {
     this->pretty_info = other.pretty_info;
     this->type = other.type;
