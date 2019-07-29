@@ -66,6 +66,6 @@ void AVMException::build_pretty_info() {
     }
     this->pretty_info += ": " + this->info;
     if (!this->hint.empty()) {
-        this->pretty_info += '"' + this->hint + '"';
+        this->pretty_info += " \"" + this->hint + '"';
     }
 }

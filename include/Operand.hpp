@@ -87,7 +87,7 @@ class Operand : public IOperand {
                 this->value = static_cast<T>(value);
             }
         } catch (const std::out_of_range &e) {
-            throw AVMException(Internal, "Invalid value for operand: ")
+            throw AVMException(Internal, "Invalid value for operand:")
                 .set_hint(str);
         }
 
