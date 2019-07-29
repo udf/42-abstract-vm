@@ -50,8 +50,8 @@ class AVM {
 
     struct tToken {
         eTokens type;
-        std::string value;
         size_t col_pos;
+        std::string value;
     };
 
     std::vector<tToken> lex_line(std::string line);

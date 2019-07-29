@@ -36,11 +36,12 @@ auto AVM::lex_line(std::string line) -> std::vector<tToken> {
                 ).set_column(col_pos + 1);
             }
 
-            matched_tokens.push_back({
-                static_cast<eTokens>(i),
-                line.substr(0, static_cast<size_t>(matches[0].length())),
-                col_pos
-            });
+            matched_tokens.emplace_back();
+            tToken &token = matched_tokens.back();
+
+            token.col_pos = col_pos;
+            token.type = static_cast<eTokens>(i);
+            token.value = line.substr(0, static_cast<size_t>(matches[0].length()));
         }
 
         if (matched_tokens.size() == 0) {
