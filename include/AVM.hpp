@@ -15,13 +15,6 @@ class AVM {
     AVM(const AVM &other) = delete;
     AVM &operator=(const AVM &other) = delete;
 
-    using operand_uptr = std::unique_ptr<IOperand const>;
-
-    static const OperandFactory factory;
-
-    std::vector<operand_uptr> stack;
-    bool exit_flag = false;
-
     template<typename F>
     void do_binary_op(F f = F());
 
@@ -38,13 +31,12 @@ class AVM {
     void exit();
 
     using instr_fptr = decltype(&AVM::exit);
+    using operand_uptr = std::unique_ptr<IOperand const>;
 
     struct InstrDef {
         instr_fptr func;
         bool needs_arg;
     };
-
-    static const std::unordered_map<std::string, InstrDef> instr_defs;
 
     struct ParsedInstruction {
         struct Environment {
@@ -55,6 +47,12 @@ class AVM {
         instr_fptr func;
         Environment env;
     };
+
+    static const std::unordered_map<std::string, InstrDef> instr_defs;
+    static const OperandFactory factory;
+
+    std::vector<operand_uptr> stack;
+    bool exit_flag = false;
 
     ParsedInstruction::Environment const *instr_env = nullptr;
     std::vector<ParsedInstruction> instructions;
