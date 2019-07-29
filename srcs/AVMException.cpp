@@ -1,4 +1,4 @@
-#include "exceptions.hpp"
+#include "AVMException.hpp"
 
 AVMException::AVMException(
     eAVMException type,

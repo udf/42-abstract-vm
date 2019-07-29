@@ -5,7 +5,7 @@
 #include <iostream>
 #include <unordered_map>
 
-#include "exceptions.hpp"
+#include "AVMException.hpp"
 #include "IOperand.hpp"
 #include "OperandFactory.hpp"
 

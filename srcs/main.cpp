@@ -5,7 +5,7 @@
 
 #include "AVM.hpp"
 #include "OperandFactory.hpp"
-#include "exceptions.hpp"
+#include "AVMException.hpp"
 
 // TODO: make this a function in the AVM class
 auto lex(size_t line_number, std::string &line) {

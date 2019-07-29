@@ -7,7 +7,7 @@
 #include "IOperand.hpp"
 #include "OperandFactory.hpp"
 #include "OperandOps.hpp"
-#include "exceptions.hpp"
+#include "AVMException.hpp"
 
 namespace Operand {
 
