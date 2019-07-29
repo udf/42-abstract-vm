@@ -135,6 +135,13 @@ class Operand : public IOperand {
         return operand<modulus<>>(rhs);
     }
 
+    bool operator==(IOperand const &rhs) const override {
+        if (this->getType() != rhs.getType())
+            return false;
+        this_type const &rhs_t = static_cast<this_type const &>(rhs);
+        return this->value == rhs_t.value;
+    }
+
     std::string const &toString(void) const override {
         return this->str_value;
     }

@@ -4,7 +4,7 @@ decltype(AVM::instr_defs) AVM::instr_defs({
     {"push", {&AVM::push, true}},
     {"pop", {&AVM::pop, false}},
     {"dump", {&AVM::dump, false}},
-    {"assert", {&AVM::assert, false}},
+    {"assert", {&AVM::assert, true}},
     {"add", {&AVM::add, false}},
     {"sub", {&AVM::sub, false}},
     {"mul", {&AVM::mul, false}},
@@ -108,7 +108,10 @@ void AVM::dump() {
 }
 
 void AVM::assert() {
-    throw AVMException(Runtime, "implement this");
+    if (*instr_env->arg == *stack.back())
+        return;
+    // TODO: hint with strtype + strval of stack top/arg
+    throw AVMException(Runtime, "Assertion error");
 }
 
 void AVM::add() {

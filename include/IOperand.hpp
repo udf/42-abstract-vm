@@ -2,6 +2,8 @@
 #include <string>
 #include <variant>
 
+// TODO: tie enum and type together and reference those bindings instead of
+// repeating the enum+type in Operand.hpp
 enum eOperandType {
     Int8,
     Int16,
@@ -29,6 +31,8 @@ class IOperand {
     virtual IOperand const *operator*(IOperand const &rhs) const = 0;
     virtual IOperand const *operator/(IOperand const &rhs) const = 0;
     virtual IOperand const *operator%(IOperand const &rhs) const = 0;
+
+    virtual bool operator==(IOperand const &rhs) const = 0;
 
     virtual std::string const &toString(void) const = 0;
 
