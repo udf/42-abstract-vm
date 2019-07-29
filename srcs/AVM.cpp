@@ -73,10 +73,10 @@ void AVM::do_binary_op(F f) {
         );
     }
 
-    auto left = std::move(this->stack.back());
+    auto right = std::move(this->stack.back());
     this->stack.pop_back();
 
-    auto right = std::move(this->stack.back());
+    auto left = std::move(this->stack.back());
     this->stack.pop_back();
 
     auto result = f(*left, *right);
