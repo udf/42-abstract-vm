@@ -79,7 +79,7 @@ void AVM::do_binary_op(F f) {
     auto right = std::move(this->stack.back());
     this->stack.pop_back();
 
-    auto result = f(*left.get(), *right.get());
+    auto result = f(*left, *right);
     this->stack.emplace_back(result);
 }
 
@@ -137,11 +137,11 @@ void AVM::mod() {
 void AVM::print() {
     if (this->stack.size() < 1)
         throw AVMException(Runtime, "print on empty stack");
-    auto item = this->stack.back().get();
-    if (item->getType() != Int8)
+    auto &item = *this->stack.back();
+    if (item.getType() != Int8)
         throw AVMException(Runtime, "print on non int8 variable");
     // TODO: figure out a way to directly use the type of an Int8 instead of respecifying it
-    auto value = std::get<int8_t>(item->getValue());
+    auto value = std::get<int8_t>(item.getValue());
     std::cout << static_cast<char>(value);
 }
 
