@@ -27,35 +27,31 @@ AVMException::AVMException(const AVMException &other) {
 AVMException::~AVMException() {
 }
 
-// TODO: templated set member?
-AVMException &AVMException::set_type(eAVMException type) {
-    this->type = type;
+template<typename T>
+AVMException &AVMException::set_member(T AVMException::* member, T value) {
+    this->*member = value;
     this->build_pretty_info();
     return *this;
+}
+
+AVMException &AVMException::set_type(eAVMException type) {
+    return set_member(&AVMException::type, type);
 }
 
 AVMException &AVMException::set_info(std::string info) {
-    this->info = info;
-    this->build_pretty_info();
-    return *this;
+    return set_member(&AVMException::info, info);
 }
 
 AVMException &AVMException::set_line(size_t line) {
-    this->line = line;
-    this->build_pretty_info();
-    return *this;
+    return set_member(&AVMException::line, line);
 }
 
 AVMException &AVMException::set_column(size_t column) {
-    this->column = column;
-    this->build_pretty_info();
-    return *this;
+    return set_member(&AVMException::column, column);
 }
 
 AVMException &AVMException::set_hint(std::string hint) {
-    this->hint = hint;
-    this->build_pretty_info();
-    return *this;
+    return set_member(&AVMException::hint, hint);
 }
 
 const char *AVMException::what() const throw() {

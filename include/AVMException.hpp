@@ -37,6 +37,8 @@ class AVMException : public std::exception {
     AVMException &operator=(const AVMException &other);
 
     void build_pretty_info();
+    template<typename T>
+    AVMException &set_member(T AVMException::* member, T value);
 
     std::string pretty_info;
 
