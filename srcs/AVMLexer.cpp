@@ -20,6 +20,7 @@ const std::array<std::regex, AVM::eTokens::_LENGTH> AVM::rTokens = {
 
 auto AVM::lex_line(std::string line) -> std::vector<tToken> {
     std::vector<tToken> tokens;
+    size_t col_pos = 1;
 
     while (line.length() > 0) {
         std::vector<tToken> matched_tokens;
@@ -29,10 +30,11 @@ auto AVM::lex_line(std::string line) -> std::vector<tToken> {
             if (!std::regex_search(line, matches, rTokens[i]))
                 continue;
 
-            if (matches.position() != 0)
+            if (matches.position() != 0) {
                 throw AVMException(
                     "Regex match does not start at the beginning of input"
-                );
+                ).set_column(col_pos + 1);
+            }
 
             matched_tokens.push_back({
                 static_cast<eTokens>(i),
@@ -40,16 +42,14 @@ auto AVM::lex_line(std::string line) -> std::vector<tToken> {
             });
         }
 
-        // TODO: count removed characters and throw character position
-        // also put char position in tToken so parser has that info
         if (matched_tokens.size() == 0) {
-            throw AVMException(Lexer, "Unknown token");
+            throw AVMException(Lexer, "Unknown token").set_column(col_pos);
         }
         if (matched_tokens.size() > 1) {
             for (auto &&t : matched_tokens) {
                 std::cout << sTokenNames[t.type] << std::endl;
             }
-            throw AVMException(Lexer, "Ambiguous token");
+            throw AVMException(Lexer, "Ambiguous token").set_column(col_pos);
         }
 
         tToken &token = matched_tokens[0];
@@ -62,6 +62,7 @@ auto AVM::lex_line(std::string line) -> std::vector<tToken> {
             tokens.push_back(token);
         }
 
+        col_pos += token.value.length();
         line.erase(0, token.value.length());
     }
 
