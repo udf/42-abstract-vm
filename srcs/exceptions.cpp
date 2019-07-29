@@ -21,6 +21,7 @@ AVMException::AVMException(const AVMException &other) {
 AVMException::~AVMException() {
 }
 
+// TODO: templated set member?
 AVMException &AVMException::set_type(eAVMException type) {
     this->type = type;
     this->build_pretty_info();
