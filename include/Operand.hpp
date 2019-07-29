@@ -27,32 +27,29 @@ constexpr bool is_one_of_vt() {
 
 template<typename F, typename V>
 V var_op(const V &x, const V &y, F f = F()) {
-    return std::visit(
-        [&f](auto x, auto y) -> V {
-            using x_t = decltype(x);
+    const auto visitor = [&f](auto x, auto y) -> V {
+        using x_t = decltype(x);
 
-            if constexpr (std::is_same_v<x_t, decltype(y)>) {
-                // Hack time: if our operands are an integer type, then do
-                // the calculation as int64. This lets us do over/underflow
-                // checks easily
-                if constexpr (is_one_of_vt<x_t, Int8, Int16, Int32>()) {
-                    int64_t result = f(
-                        static_cast<int64_t>(x),
-                        static_cast<int64_t>(y)
-                    );
-                    if (result > std::numeric_limits<x_t>::max())
-                        throw AVMException("Overflow");
-                    if (result < std::numeric_limits<x_t>::min())
-                        throw AVMException("Underflow");
-                    return static_cast<x_t>(result);
-                }
-                return f(x, y);
+        if constexpr (std::is_same_v<x_t, decltype(y)>) {
+            // Hack time: if our operands are an integer type, then do
+            // the calculation as int64. This lets us do over/underflow
+            // checks easily
+            if constexpr (is_one_of_vt<x_t, Int8, Int16, Int32>()) {
+                int64_t result = f(
+                    static_cast<int64_t>(x),
+                    static_cast<int64_t>(y)
+                );
+                if (result > std::numeric_limits<x_t>::max())
+                    throw AVMException("Overflow");
+                if (result < std::numeric_limits<x_t>::min())
+                    throw AVMException("Underflow");
+                return static_cast<x_t>(result);
             }
-            throw AVMException("This should never happen");
-        },
-        x,
-        y
-    );
+            return f(x, y);
+        }
+        throw AVMException("This should never happen");
+    };
+    return std::visit(visitor, x, y);
 }
 
 template<typename T, eOperandType ENUM_TYPE>
