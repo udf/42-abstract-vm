@@ -6,7 +6,7 @@
 #    By: mhoosen <mhoosen@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/01/25 07:39:20 by mhoosen           #+#    #+#              #
-#    Updated: 2019/07/29 14:24:03 by mhoosen          ###   ########.fr        #
+#    Updated: 2019/07/29 16:32:25 by mhoosen          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,7 +30,7 @@ BUILD_DIR=./build/
 FILESTEMS=AVMException OperandFactory AVM
 
 # Plain source files
-SRC_FILES=$(FILESTEMS) main
+SRC_FILES=$(FILESTEMS) main AVMLexer
 
 # Plain headers
 INCLUDE_FILES=$(FILESTEMS) IOperand OperandFactory Operand OperandOps

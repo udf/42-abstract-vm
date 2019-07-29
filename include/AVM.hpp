@@ -1,9 +1,10 @@
 #pragma once
 
-#include <memory>
-#include <vector>
 #include <iostream>
+#include <memory>
+#include <regex>
 #include <unordered_map>
+#include <vector>
 
 #include "AVMException.hpp"
 #include "IOperand.hpp"
@@ -31,6 +32,28 @@ class AVM {
     void mod();
     void print();
     void exit();
+
+    // Lexer data
+    enum eTokens {
+        WHITESPACE,
+        IDENTIFIER,
+        NUMBER,
+        L_BRACKET,
+        R_BRACKET,
+        COMMENT_START,
+        _LENGTH
+    };
+
+    static const char *sTokenNames[eTokens::_LENGTH];
+
+    static const std::array<std::regex, eTokens::_LENGTH> rTokens; 
+
+    struct tToken {
+        eTokens type;
+        std::string value;
+    };
+
+    std::vector<tToken> lex_line(std::string line);
 
     // Parser data
     static const OperandFactory factory;
