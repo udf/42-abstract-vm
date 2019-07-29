@@ -32,6 +32,9 @@ V var_op(const V &x, const V &y, F f = F()) {
             using x_t = decltype(x);
 
             if constexpr (std::is_same_v<x_t, decltype(y)>) {
+                // Hack time: if our operands are an integer type, then do
+                // the calculation as int64. This lets us do over/underflow
+                // checks easily
                 if constexpr (is_one_of_vt<x_t, Int8, Int16, Int32>()) {
                     int64_t result = f(
                         static_cast<int64_t>(x),
