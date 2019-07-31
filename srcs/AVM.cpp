@@ -1,52 +1,10 @@
 #include "AVM.hpp"
 
-decltype(AVM::instr_defs) AVM::instr_defs({
-    {"push", {&AVM::push, true}},
-    {"pop", {&AVM::pop, false}},
-    {"dump", {&AVM::dump, false}},
-    {"assert", {&AVM::assert, true}},
-    {"add", {&AVM::add, false}},
-    {"sub", {&AVM::sub, false}},
-    {"mul", {&AVM::mul, false}},
-    {"div", {&AVM::div, false}},
-    {"mod", {&AVM::mod, false}},
-    {"print", {&AVM::print, false}},
-    {"exit", {&AVM::exit, false}},
-});
-
-decltype(AVM::factory) AVM::factory = OperandFactory();
-
 AVM::AVM(std::vector<Line> &lines) {
-    // Parse the lines into memes
-    for (auto &&line : lines) {
-        auto it = instr_defs.find(line.instruction.c_str());
-        if (it == instr_defs.end()) {
-            throw AVMException(Parser, "Unknown instruction")
-                .set_line(line.line_number);
-        }
+    (void)(lines);
 
-        const InstrDef &func = it->second;
-        bool line_has_arg = !line.value.empty();
-
-        if (func.needs_arg != line_has_arg) {
-            const char *info = func.needs_arg
-                ? "Instruction needs an argument but none was provided"
-                : "Instruction takes no arguments but one was provided";
-            throw AVMException(Parser, info).set_line(line.line_number);
-        }
-
-        this->instructions.emplace_back();
-        ParsedInstruction &instr = this->instructions.back();
-        instr.func = func.func;
-        instr.env.line_number = line.line_number;
-        if (func.needs_arg) {
-            // TODO: rethrow internal exception
-            instr.env.arg = operand_uptr(this->factory.createOperand(
-                line.value_type.c_str(),
-                line.value
-            ));
-        }
-    }
+    std::string line = "push int9(8)";
+    this->parse_line(line);
 }
 
 AVM::~AVM() {

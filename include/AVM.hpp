@@ -16,9 +16,11 @@ class AVM {
     AVM(const AVM &other) = delete;
     AVM &operator=(const AVM &other) = delete;
 
+
     // Internal functions
     template<typename F>
     void do_binary_op(F f = F());
+
 
     // Instructions
     void push();
@@ -33,7 +35,8 @@ class AVM {
     void print();
     void exit();
 
-    // Lexer data
+
+    // Lexer
     enum eTokens {
         WHITESPACE,
         IDENTIFIER,
@@ -48,6 +51,7 @@ class AVM {
 
     static const std::array<std::regex, eTokens::_LENGTH> rTokens; 
 
+    // TODO: using vector tokens
     struct tToken {
         eTokens type;
         size_t col_pos;
@@ -57,17 +61,15 @@ class AVM {
     // TODO: make static
     std::vector<tToken> lex_line(std::string line);
 
-    // Parser data
+
+    // Parser
     static const OperandFactory factory;
 
     using instr_fptr = decltype(&AVM::exit);
-    struct InstrDef {
-        instr_fptr func;
-        bool needs_arg;
-    };
-    static const std::unordered_map<std::string, InstrDef> instr_defs;
+    using instr_mapping = const std::unordered_map<std::string, instr_fptr>;
 
     using operand_uptr = std::unique_ptr<IOperand const>;
+    // TODO: remove environment
     struct ParsedInstruction {
         struct Environment {
             operand_uptr arg;
@@ -78,9 +80,18 @@ class AVM {
         Environment env;
     };
 
+    // TODO: move into struct
+    ParsedInstruction envbuilder_single(std::vector<tToken> &tokens);
+    ParsedInstruction envbuilder_val_arg(std::vector<tToken> &tokens);
+    using envbuilder_fptr = decltype(&AVM::envbuilder_single);
+
+    // TODO: make static
+    ParsedInstruction parse_line(std::string &line);
+
+
+    // Runtime
     std::vector<ParsedInstruction> instructions;
 
-    // Runtime data
     ParsedInstruction::Environment const *instr_env = nullptr;
     std::vector<operand_uptr> stack;
     bool exit_flag = false;
