@@ -1,6 +1,6 @@
 #include "AVM.hpp"
 
-auto AVM::EnvBuilders::single(std::vector<tToken> &tokens) -> ParsedInstruction {
+auto AVM::InstrBuilders::single(std::vector<tToken> &tokens) -> ParsedInstruction {
     static instr_mapping mapping{
         {"pop", &AVM::pop},
         {"dump", &AVM::dump},
@@ -27,7 +27,7 @@ auto AVM::EnvBuilders::single(std::vector<tToken> &tokens) -> ParsedInstruction 
     return p;
 }
 
-auto AVM::EnvBuilders::val_arg(std::vector<tToken> &tokens) -> ParsedInstruction {
+auto AVM::InstrBuilders::val_arg(std::vector<tToken> &tokens) -> ParsedInstruction {
     static instr_mapping mapping{
         {"push", &AVM::push},
         {"assert", &AVM::assert},
@@ -73,16 +73,16 @@ auto AVM::parse_line(std::string &line) -> ParsedInstruction {
     // a vector of struct references? (instances inside the envbuilder struct)
     static const std::vector<
         std::pair<
-            EnvBuilders::fptr,
+            InstrBuilders::fptr,
             std::vector<eTokens>
         >
     > patterns = {
         {
-            &AVM::EnvBuilders::single,
+            &AVM::InstrBuilders::single,
             {IDENTIFIER}
         },
         {
-            &AVM::EnvBuilders::val_arg,
+            &AVM::InstrBuilders::val_arg,
             {IDENTIFIER, IDENTIFIER, L_BRACKET, NUMBER, R_BRACKET}
         }
     };

@@ -71,12 +71,11 @@ class AVM {
         operand_uptr arg;
     };
 
-    // TODO: rename to InstrBuilders
-    struct EnvBuilders {
+    struct InstrBuilders {
         static ParsedInstruction single(std::vector<tToken> &tokens);
         static ParsedInstruction val_arg(std::vector<tToken> &tokens);
 
-        using fptr = decltype(&EnvBuilders::single);
+        using fptr = decltype(&InstrBuilders::single);
     };
 
     static ParsedInstruction parse_line(std::string &line);
