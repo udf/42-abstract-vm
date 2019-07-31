@@ -1,8 +1,5 @@
 #include "AVM.hpp"
 
-// TODO: make this static inside val_arg
-decltype(AVM::factory) AVM::factory = OperandFactory();
-
 auto AVM::envbuilder_single(std::vector<tToken> &tokens) -> ParsedInstruction {
     static instr_mapping mapping{
         {"pop", &AVM::pop},
@@ -35,6 +32,7 @@ auto AVM::envbuilder_val_arg(std::vector<tToken> &tokens) -> ParsedInstruction {
         {"push", &AVM::push},
         {"assert", &AVM::assert},
     };
+    static auto factory = OperandFactory();
 
     ParsedInstruction p{};
 
@@ -47,7 +45,7 @@ auto AVM::envbuilder_val_arg(std::vector<tToken> &tokens) -> ParsedInstruction {
     p.func = (*it).second;
 
     try {
-        p.env.arg = operand_uptr(this->factory.createOperand(
+        p.env.arg = operand_uptr(factory.createOperand(
             tokens[1].value.c_str(),
             tokens[3].value
         ));

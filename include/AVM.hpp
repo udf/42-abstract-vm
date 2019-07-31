@@ -63,8 +63,6 @@ class AVM {
 
 
     // Parser
-    static const OperandFactory factory;
-
     using instr_fptr = decltype(&AVM::exit);
     using instr_mapping = const std::unordered_map<std::string, instr_fptr>;
 
