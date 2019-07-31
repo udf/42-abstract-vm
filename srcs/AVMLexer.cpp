@@ -1,5 +1,6 @@
 #include "AVM.hpp"
 
+// TODO: end token
 const char *AVM::sTokenNames[eTokens::_LENGTH] = {
     "WHITESPACE",
     "IDENTIFIER",
