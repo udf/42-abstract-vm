@@ -67,7 +67,6 @@ class AVM {
     using operand_uptr = std::unique_ptr<IOperand const>;
     struct ParsedInstruction {
         size_t line_number;
-
         instr_fptr func;
         operand_uptr arg;
     };
