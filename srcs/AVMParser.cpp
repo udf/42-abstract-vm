@@ -75,8 +75,6 @@ size_t first_diff(std::vector<T> s1, std::vector<U> s2, F func) {
 }
 
 auto AVM::parse_line(std::string &line) -> ParsedInstruction {
-    // TODO: find a better way to do this mapping
-    // a vector of struct references? (instances inside the envbuilder struct)
     static const std::vector<const InstrBuilders::FuncData *> builders = {
         &InstrBuilders::single,
         &InstrBuilders::val_arg
