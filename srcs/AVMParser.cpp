@@ -81,7 +81,7 @@ size_t first_diff(std::vector<T> s1, std::vector<U> s2, F func) {
 auto AVM::parse_line(std::string &line) -> ParsedInstruction {
     // TODO: find a better way to do this mapping
     // a vector of struct references? (instances inside the envbuilder struct)
-    static const std::vector<const InstrBuilders::FuncData *> parsers = {
+    static const std::vector<const InstrBuilders::FuncData *> builders = {
         &InstrBuilders::single,
         &InstrBuilders::val_arg
     };
@@ -99,9 +99,9 @@ auto AVM::parse_line(std::string &line) -> ParsedInstruction {
 
     std::vector<std::pair<bool, size_t>> matches;
     size_t match_count = 0;
-    for (auto parser : parsers) {
+    for (auto builder : builders) {
         size_t i = first_diff(
-            parser->pattern,
+            builder->pattern,
             tokens,
             [](eTokens &expected_type, tToken &token) {
                 return token.type == expected_type;
@@ -111,20 +111,20 @@ auto AVM::parse_line(std::string &line) -> ParsedInstruction {
         // Note that the lengths need to be compared because an input longer than the pattern
         // can make the difference appear after the pattern
         // An end token would remove the need for the length check
-        bool matched = i >= parser->pattern.size() && tokens.size() == parser->pattern.size();
+        bool matched = i >= builder->pattern.size() && tokens.size() == builder->pattern.size();
         matches.push_back({matched, i});
         if (matched)
             match_count++;
     }
 
     if (match_count > 1) {
-        throw AVMException(Internal, "fix me: more than one parser pattern matched");
+        throw AVMException(Internal, "fix me: more than one builder pattern matched");
     }
 
     // Call the environment builder if we got a match
     for (size_t i = 0; i < matches.size(); i++) {
         if (matches[i].first) {
-            return (parsers[i]->func)(tokens);
+            return (builders[i]->func)(tokens);
         }
     }
 
@@ -140,7 +140,7 @@ auto AVM::parse_line(std::string &line) -> ParsedInstruction {
         auto& [matched, match_pos] = matches[i];
         if (match_pos != longest_match)
             continue;
-        info += sTokenNames[parsers[i]->pattern[longest_match]];
+        info += sTokenNames[builders[i]->pattern[longest_match]];
         info += " ";
     }
     info += "after";
