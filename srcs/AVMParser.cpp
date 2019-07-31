@@ -46,11 +46,15 @@ auto AVM::envbuilder_val_arg(std::vector<tToken> &tokens) -> ParsedInstruction {
             .set_column(tokens[0].col_pos);
     p.func = (*it).second;
 
-    // TODO: rethrow internal exception
-    p.env.arg = operand_uptr(this->factory.createOperand(
-        tokens[1].value.c_str(),
-        tokens[3].value
-    ));
+    try {
+        p.env.arg = operand_uptr(this->factory.createOperand(
+            tokens[1].value.c_str(),
+            tokens[3].value
+        ));
+    } catch (AVMException &e) {
+        e.set_type(Parser);
+        throw;
+    }
 
     return p;
 }
