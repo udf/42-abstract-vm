@@ -35,7 +35,8 @@ IOperand const *OperandFactory::createOperand(
 ) const {
     auto it = name_mapping.find(type);
     if (it == name_mapping.end()) {
-        throw AVMException("Unknown operand type");
+        throw AVMException("Unknown operand type:")
+            .set_hint(type);
     }
     return this->createOperand((*it).second, value);
 }
