@@ -45,7 +45,7 @@ auto AVM::envbuilder_val_arg(std::vector<tToken> &tokens) -> ParsedInstruction {
     p.func = (*it).second;
 
     try {
-        p.env.arg = operand_uptr(factory.createOperand(
+        p.arg = operand_uptr(factory.createOperand(
             tokens[1].value.c_str(),
             tokens[3].value
         ));

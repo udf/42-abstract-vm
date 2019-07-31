@@ -12,11 +12,11 @@ AVM::~AVM() {
 
 void AVM::run() {
     for (auto &&instruction : this->instructions) {
-        this->instr_env = &instruction.env;
+        this->instr_arg = instruction.arg.get();
         try {
             (this->*instruction.func)();
         } catch (AVMException &e) {
-            e.set_line(instruction.env.line_number);
+            e.set_line(instruction.line_number);
             throw;
         }
     }
@@ -42,7 +42,7 @@ void AVM::do_binary_op(F f) {
 }
 
 void AVM::push() {
-    this->stack.emplace_back(instr_env->arg->clone());
+    this->stack.emplace_back(instr_arg->clone());
 }
 
 void AVM::pop() {
@@ -66,7 +66,7 @@ void AVM::dump() {
 }
 
 void AVM::assert() {
-    if (*instr_env->arg == *stack.back())
+    if (*instr_arg == *stack.back())
         return;
     // TODO: hint with strtype + strval of stack top/arg
     throw AVMException(Runtime, "Assertion error");

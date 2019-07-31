@@ -65,15 +65,11 @@ class AVM {
     using instr_mapping = const std::unordered_map<std::string, instr_fptr>;
 
     using operand_uptr = std::unique_ptr<IOperand const>;
-    // TODO: remove environment
     struct ParsedInstruction {
-        struct Environment {
-            operand_uptr arg;
-            size_t line_number;
-        };
+        size_t line_number;
 
         instr_fptr func;
-        Environment env;
+        operand_uptr arg;
     };
 
     // TODO: move into struct
@@ -87,7 +83,7 @@ class AVM {
     // Runtime
     std::vector<ParsedInstruction> instructions;
 
-    ParsedInstruction::Environment const *instr_env = nullptr;
+    IOperand const *instr_arg = nullptr;
     std::vector<operand_uptr> stack;
     bool exit_flag = false;
 
