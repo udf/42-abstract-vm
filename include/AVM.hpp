@@ -72,10 +72,17 @@ class AVM {
     };
 
     struct InstrBuilders {
-        static ParsedInstruction single(std::vector<tToken> &tokens);
-        static ParsedInstruction val_arg(std::vector<tToken> &tokens);
+        static ParsedInstruction parse_single(std::vector<tToken> &tokens);
+        static ParsedInstruction parse_val_arg(std::vector<tToken> &tokens);
 
-        using fptr = decltype(&InstrBuilders::single);
+        using fptr = decltype(&InstrBuilders::parse_single);
+        struct FuncData {
+            fptr func;
+            std::vector<eTokens> pattern;
+        };
+
+        static const FuncData single;
+        static const FuncData val_arg;
     };
 
     static ParsedInstruction parse_line(std::string &line);

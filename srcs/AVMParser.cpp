@@ -1,6 +1,16 @@
 #include "AVM.hpp"
 
-auto AVM::InstrBuilders::single(std::vector<tToken> &tokens) -> ParsedInstruction {
+const AVM::InstrBuilders::FuncData AVM::InstrBuilders::single = {
+    &InstrBuilders::parse_single,
+    {IDENTIFIER}
+};
+
+const AVM::InstrBuilders::FuncData AVM::InstrBuilders::val_arg = {
+    &InstrBuilders::parse_val_arg,
+    {IDENTIFIER, IDENTIFIER, L_BRACKET, NUMBER, R_BRACKET}
+};
+
+auto AVM::InstrBuilders::parse_single(std::vector<tToken> &tokens) -> ParsedInstruction {
     static instr_mapping mapping{
         {"pop", &AVM::pop},
         {"dump", &AVM::dump},
@@ -27,7 +37,7 @@ auto AVM::InstrBuilders::single(std::vector<tToken> &tokens) -> ParsedInstructio
     return p;
 }
 
-auto AVM::InstrBuilders::val_arg(std::vector<tToken> &tokens) -> ParsedInstruction {
+auto AVM::InstrBuilders::parse_val_arg(std::vector<tToken> &tokens) -> ParsedInstruction {
     static instr_mapping mapping{
         {"push", &AVM::push},
         {"assert", &AVM::assert},
@@ -71,20 +81,9 @@ size_t first_diff(std::vector<T> s1, std::vector<U> s2, F func) {
 auto AVM::parse_line(std::string &line) -> ParsedInstruction {
     // TODO: find a better way to do this mapping
     // a vector of struct references? (instances inside the envbuilder struct)
-    static const std::vector<
-        std::pair<
-            InstrBuilders::fptr,
-            std::vector<eTokens>
-        >
-    > patterns = {
-        {
-            &AVM::InstrBuilders::single,
-            {IDENTIFIER}
-        },
-        {
-            &AVM::InstrBuilders::val_arg,
-            {IDENTIFIER, IDENTIFIER, L_BRACKET, NUMBER, R_BRACKET}
-        }
+    static const std::vector<const InstrBuilders::FuncData *> parsers = {
+        &InstrBuilders::single,
+        &InstrBuilders::val_arg
     };
 
     auto tokens = AVM::lex_line(line);
@@ -100,9 +99,9 @@ auto AVM::parse_line(std::string &line) -> ParsedInstruction {
 
     std::vector<std::pair<bool, size_t>> matches;
     size_t match_count = 0;
-    for (auto &pattern : patterns) {
+    for (auto parser : parsers) {
         size_t i = first_diff(
-            pattern.second,
+            parser->pattern,
             tokens,
             [](eTokens &expected_type, tToken &token) {
                 return token.type == expected_type;
@@ -112,20 +111,20 @@ auto AVM::parse_line(std::string &line) -> ParsedInstruction {
         // Note that the lengths need to be compared because an input longer than the pattern
         // can make the difference appear after the pattern
         // An end token would remove the need for the length check
-        bool matched = i >= pattern.second.size() && tokens.size() == pattern.second.size();
+        bool matched = i >= parser->pattern.size() && tokens.size() == parser->pattern.size();
         matches.push_back({matched, i});
         if (matched)
             match_count++;
     }
 
     if (match_count > 1) {
-        throw AVMException(Internal, "fix me: more than one parse pattern matched");
+        throw AVMException(Internal, "fix me: more than one parser pattern matched");
     }
 
     // Call the environment builder if we got a match
     for (size_t i = 0; i < matches.size(); i++) {
         if (matches[i].first) {
-            return (patterns[i].first)(tokens);
+            return (parsers[i]->func)(tokens);
         }
     }
 
@@ -141,7 +140,7 @@ auto AVM::parse_line(std::string &line) -> ParsedInstruction {
         auto& [matched, match_pos] = matches[i];
         if (match_pos != longest_match)
             continue;
-        info += sTokenNames[patterns[i].second[longest_match]];
+        info += sTokenNames[parsers[i]->pattern[longest_match]];
         info += " ";
     }
     info += "after";
