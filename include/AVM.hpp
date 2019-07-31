@@ -73,8 +73,8 @@ class AVM {
     };
 
     // TODO: move into struct
-    ParsedInstruction envbuilder_single(std::vector<tToken> &tokens);
-    ParsedInstruction envbuilder_val_arg(std::vector<tToken> &tokens);
+    static ParsedInstruction envbuilder_single(std::vector<tToken> &tokens);
+    static ParsedInstruction envbuilder_val_arg(std::vector<tToken> &tokens);
     using envbuilder_fptr = decltype(&AVM::envbuilder_single);
 
     static ParsedInstruction parse_line(std::string &line);

@@ -125,7 +125,7 @@ auto AVM::parse_line(std::string &line) -> ParsedInstruction {
     // Call the environment builder if we got a match
     for (size_t i = 0; i < matches.size(); i++) {
         if (matches[i].first) {
-            return (this->*patterns[i].first)(tokens);
+            return (patterns[i].first)(tokens);
         }
     }
 
