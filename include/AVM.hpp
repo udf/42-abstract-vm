@@ -51,7 +51,6 @@ class AVM {
 
     static const std::array<std::regex, eTokens::_LENGTH> rTokens; 
 
-    // TODO: using vector tokens
     struct tToken {
         eTokens type;
         size_t col_pos;
