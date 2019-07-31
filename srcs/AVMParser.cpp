@@ -10,6 +10,15 @@ const AVM::InstrBuilders::FuncData AVM::InstrBuilders::val_arg = {
     {IDENTIFIER, IDENTIFIER, L_BRACKET, NUMBER, R_BRACKET}
 };
 
+AVM::instr_fptr AVM::InstrBuilders::get_func(instr_mapping &m, tToken &token) {
+    auto it = m.find(token.value);
+    if (it == m.end())
+        throw AVMException(Parser, "Unknown instruction:")
+            .set_hint(token.value)
+            .set_column(token.col_pos);
+    return (*it).second;
+}
+
 auto AVM::InstrBuilders::parse_single(std::vector<tToken> &tokens) -> ParsedInstruction {
     static instr_mapping mapping{
         {"pop", &AVM::pop},
@@ -25,14 +34,7 @@ auto AVM::InstrBuilders::parse_single(std::vector<tToken> &tokens) -> ParsedInst
 
     ParsedInstruction p{};
 
-    // TODO: move this to a func
-    auto &identifier = tokens[0].value;
-    auto it = mapping.find(identifier);
-    if (it == mapping.end())
-        throw AVMException(Parser, "Unknown instruction:")
-            .set_hint(identifier)
-            .set_column(tokens[0].col_pos);
-    p.func = (*it).second;
+    p.func = get_func(mapping, tokens[0]);
 
     return p;
 }
@@ -46,13 +48,7 @@ auto AVM::InstrBuilders::parse_val_arg(std::vector<tToken> &tokens) -> ParsedIns
 
     ParsedInstruction p{};
 
-    auto &identifier = tokens[0].value;
-    auto it = mapping.find(identifier);
-    if (it == mapping.end())
-        throw AVMException(Parser, "Unknown instruction:")
-            .set_hint(identifier)
-            .set_column(tokens[0].col_pos);
-    p.func = (*it).second;
+    p.func = get_func(mapping, tokens[0]);
 
     try {
         p.arg = operand_uptr(factory.createOperand(
