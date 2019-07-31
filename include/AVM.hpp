@@ -81,8 +81,7 @@ class AVM {
     ParsedInstruction envbuilder_val_arg(std::vector<tToken> &tokens);
     using envbuilder_fptr = decltype(&AVM::envbuilder_single);
 
-    // TODO: make static
-    ParsedInstruction parse_line(std::string &line);
+    static ParsedInstruction parse_line(std::string &line);
 
 
     // Runtime

@@ -4,7 +4,7 @@ AVM::AVM(std::vector<Line> &lines) {
     (void)(lines);
 
     std::string line = "push int9(8)";
-    this->parse_line(line);
+    AVM::parse_line(line);
 }
 
 AVM::~AVM() {
