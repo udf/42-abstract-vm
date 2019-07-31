@@ -58,8 +58,7 @@ class AVM {
         std::string value;
     };
 
-    // TODO: make static
-    std::vector<tToken> lex_line(std::string line);
+    static std::vector<tToken> lex_line(std::string line);
 
 
     // Parser

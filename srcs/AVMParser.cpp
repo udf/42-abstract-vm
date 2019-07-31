@@ -87,7 +87,7 @@ auto AVM::parse_line(std::string &line) -> ParsedInstruction {
         }
     };
 
-    auto tokens = this->lex_line(line);
+    auto tokens = AVM::lex_line(line);
 
     // TODO: debug flag
     std::cout << "Input: " << line << std::endl;
