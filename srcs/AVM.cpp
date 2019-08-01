@@ -20,18 +20,18 @@ void AVM::load_line(std::string &line, size_t line_number) {
 }
 
 void AVM::step() {
-    try {
-        auto &instruction = this->instructions.at(this->instruction_ptr);
-        this->instruction_ptr++;
-        this->instr_arg = instruction.arg.get();
-        try {
-            (this->*instruction.func)();
-        } catch (AVMException &e) {
-            e.set_line(instruction.line_number);
-            throw;
-        }
-    } catch (std::out_of_range) {
+    if (this->instruction_ptr > this->instructions.size())
         throw AVMException(Runtime, "Unexpected end of instructions (missing exit?)");
+
+    auto &instruction = this->instructions.at(this->instruction_ptr);
+
+    this->instruction_ptr++;
+    this->instr_arg = instruction.arg.get();
+    try {
+        (this->*instruction.func)();
+    } catch (AVMException &e) {
+        e.set_line(instruction.line_number);
+        throw;
     }
 }
 
