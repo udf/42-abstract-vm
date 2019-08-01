@@ -73,15 +73,6 @@ auto AVM::parse_line(std::string &line) -> std::optional<ParsedInstruction> {
     if (tokens.size() == 1 && tokens[0].type == END)
         return std::nullopt;
 
-    // TODO: debug flag
-    std::cout << "Input: " << line << std::endl;
-    for (auto &token : tokens) {
-        std::cout << "<";
-        std::cout << sTokenNames[token.type] << "@" << token.col_pos << ", ";
-        std::cout << token.value;
-        std::cout << ">" << std::endl;
-    }
-
     std::vector<std::pair<bool, size_t>> matches;
     size_t match_count = 0;
     for (auto builder : builders) {
