@@ -33,7 +33,7 @@ FILESTEMS=AVMException OperandFactory AVM
 SRC_FILES=$(FILESTEMS) main AVMLexer AVMParser
 
 # Plain headers
-INCLUDE_FILES=$(FILESTEMS) IOperand OperandFactory Operand OperandOps
+INCLUDE_FILES=$(FILESTEMS) util IOperand OperandFactory Operand OperandOps
 
 # --- script kiddies cut here ---
 INCLUDES=$(INCLUDE_FILES:%=$(INCLUDE_DIR)%.$(HEADER_EXT))

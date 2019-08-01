@@ -63,17 +63,6 @@ auto AVM::InstrBuilders::parse_val_arg(std::vector<tToken> &tokens) -> ParsedIns
     return p;
 }
 
-// TODO: move to util file
-template<typename T, typename U, typename F>
-size_t first_diff(std::vector<T> s1, std::vector<U> s2, F func) {
-    const size_t min_len = std::min(s1.size(), s2.size());
-    for (size_t i = 0; i < min_len; i++) {
-        if (!func(s1[i], s2[i]))
-            return i;
-    }
-    return min_len;
-}
-
 auto AVM::parse_line(std::string &line) -> std::optional<ParsedInstruction> {
     static const std::vector<const InstrBuilders::FuncData *> builders = {
         &InstrBuilders::single,

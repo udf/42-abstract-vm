@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "util.hpp"
 #include "AVMException.hpp"
 #include "IOperand.hpp"
 #include "OperandFactory.hpp"
