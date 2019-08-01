@@ -79,16 +79,13 @@ void AVM::pop() {
 }
 
 void AVM::dump() {
-    size_t i = 0;
-
-    std::cout << "position: type(value) [precision]" << std::endl;
+    std::cout << "type(value) [precision]" << std::endl;
     for (auto it = this->stack.rbegin(); it != this->stack.rend(); ++it) {
         auto &item = **it;
-        std::cout << i << ": " << item.getTypeName();
+        std::cout << item.getTypeName();
         std::cout << "(" << item.toString() << ")";
         std::cout << " [" << item.getPrecision() << "]";
         std::cout << std::endl;
-        i++;
     }
 }
 
