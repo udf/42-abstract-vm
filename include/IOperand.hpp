@@ -11,32 +11,38 @@ enum eOperandType {
     eOperandTypeMAX
 };
 
-// TODO: move this into tOperandType
-static const char *sOperandName[eOperandTypeMAX] = {
-    "int8",
-    "int16",
-    "int32",
-    "float",
-    "double"
-};
-
 template<eOperandType>
 struct tOperandType;
 
 template<>
-struct tOperandType<Int8> { using type = int8_t; };
+struct tOperandType<Int8> {
+    using type = int8_t;
+    constexpr static const char *name = "int8";
+};
 
 template<>
-struct tOperandType<Int16> { using type = int16_t; };
+struct tOperandType<Int16> {
+    using type = int16_t;
+    constexpr static const char *name = "int16";
+};
 
 template<>
-struct tOperandType<Int32> { using type = int32_t; };
+struct tOperandType<Int32> {
+    using type = int32_t;
+    constexpr static const char *name = "int32";
+};
 
 template<>
-struct tOperandType<Float> { using type = float; };
+struct tOperandType<Float> {
+    using type = float;
+    constexpr static const char *name = "float";
+};
 
 template<>
-struct tOperandType<Double> { using type = double; };
+struct tOperandType<Double> {
+    using type = double;
+    constexpr static const char *name = "double";
+};
 
 
 class IOperand {
@@ -60,6 +66,7 @@ class IOperand {
     using operand_variant =
         std::variant<int8_t, int16_t, int32_t, float, double>;
 
+    virtual const char *getTypeName() const = 0;
     virtual operand_variant getValue() const = 0;
     virtual operand_variant convertVariant(operand_variant value) const = 0;
     virtual IOperand const *createFromVariant(operand_variant value) const = 0;

@@ -150,6 +150,10 @@ class Operand : public IOperand {
     ~Operand() override {
     }
 
+    const char *getTypeName() const override {
+        return tOperandType<ENUM_TYPE>::name;
+    }
+
     operand_variant getValue() const override {
         return this->value;
     }
