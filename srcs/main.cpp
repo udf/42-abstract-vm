@@ -17,7 +17,7 @@ auto read_file(std::istream &stream, AVM &avm) {
         if (line == ";;")
             break;
 
-        avm.load_line(line);
+        avm.load_line(line, line_number);
         line_number++;
     }
 }
