@@ -67,6 +67,7 @@ class IOperand {
         std::variant<int8_t, int16_t, int32_t, float, double>;
 
     virtual const char *getTypeName() const = 0;
+    virtual std::string toPrettyString() const = 0;
     virtual operand_variant getValue() const = 0;
     virtual operand_variant convertVariant(operand_variant value) const = 0;
     virtual IOperand const *createFromVariant(operand_variant value) const = 0;

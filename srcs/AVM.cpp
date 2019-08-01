@@ -92,8 +92,10 @@ void AVM::dump() {
 void AVM::assert() {
     if (*instr_arg == *stack.back())
         return;
-    // TODO: hint with strtype + strval of stack top/arg
-    throw AVMException(Runtime, "Assertion error");
+    std::string info = "Assertion error, expected \"";
+    info += instr_arg->toPrettyString() + "\" found";
+    throw AVMException(Runtime, info)
+        .set_hint(stack.back().get()->toPrettyString());
 }
 
 void AVM::add() {

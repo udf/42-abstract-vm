@@ -154,6 +154,14 @@ class Operand : public IOperand {
         return tOperandType<ENUM_TYPE>::name;
     }
 
+    std::string toPrettyString() const override {
+        std::string ret = this->getTypeName();
+        ret += '(';
+        ret += this->toString();
+        ret += ')';
+        return ret;
+    }
+
     operand_variant getValue() const override {
         return this->value;
     }
