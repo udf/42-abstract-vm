@@ -7,11 +7,16 @@ AVM::~AVM() {
 }
 
 void AVM::load_line(std::string &line, size_t line_number) {
-    auto instruction = this->parse_line(line);
-    if (!instruction)
-        return;
-    this->instructions.push_back(std::move(instruction.value()));
-    this->instructions.back().line_number = line_number;
+    try {
+        auto instruction = this->parse_line(line);
+        if (!instruction)
+            return;
+        this->instructions.push_back(std::move(instruction.value()));
+        this->instructions.back().line_number = line_number;
+    } catch (AVMException &e) {
+        e.set_line(line_number);
+        throw;
+    }
 }
 
 void AVM::step() {

@@ -144,6 +144,5 @@ auto AVM::parse_line(std::string &line) -> std::optional<ParsedInstruction> {
     tToken &last_token = tokens[longest_match];
     throw AVMException(Parser, info)
         .set_hint(last_token.value)
-        .set_column(last_token.col_pos + last_token.value.size())
-        .set_line(1); // TODO: dont set line
+        .set_column(last_token.col_pos + last_token.value.size());
 }
