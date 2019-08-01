@@ -25,14 +25,20 @@ template<>
 struct modulus<void> {
     template<class T>
     T operator()(const T &x, const T &y) const {
+        if (std::equal_to()(y, static_cast<T>(0)))
+            throw AVMException("Modulus by zero");
         return x % y;
     }
 
     float operator()(const float &x, const float &y) const {
+        if (std::equal_to()(y, 0))
+            throw AVMException("Modulus by zero");
         return fmodf(x, y);
     }
 
     double operator()(const double &x, const double &y) const {
+        if (std::equal_to()(y, 0))
+            throw AVMException("Modulus by zero");
         return fmod(x, y);
     }
 };
