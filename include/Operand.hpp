@@ -129,7 +129,7 @@ class Operand : public IOperand {
         return operand<std::multiplies<>>(rhs);
     }
     IOperand const *operator/(IOperand const &rhs) const override {
-        return operand<std::divides<>>(rhs);
+        return operand<divides<>>(rhs);
     }
     IOperand const *operator%(IOperand const &rhs) const override {
         return operand<modulus<>>(rhs);

@@ -1,8 +1,22 @@
 #pragma once
 
 #include <cmath>
+#include "AVMException.hpp"
 
 namespace Operand {
+
+template<typename T = void>
+struct divides;
+
+template<>
+struct divides<void> {
+    template<class T>
+    T operator()(const T &x, const T &y) const {
+        if (std::equal_to()(y, static_cast<T>(0)))
+            throw AVMException("Divide by zero");
+        return x / y;
+    }
+};
 
 template<typename T = void>
 struct modulus;
