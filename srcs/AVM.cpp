@@ -1,17 +1,20 @@
 #include "AVM.hpp"
 
-AVM::AVM(std::vector<Line> &lines) {
-    (void)(lines);
-
-    std::string line = "push int9(8)";
-    AVM::parse_line(line);
+AVM::AVM() {
 }
 
 AVM::~AVM() {
 }
 
-void AVM::run() {
-    for (auto &&instruction : this->instructions) {
+void AVM::load_line(std::string &line, size_t line_number) {
+    this->instructions.push_back(this->parse_line(line));
+    this->instructions.back().line_number = line_number;
+}
+
+void AVM::step() {
+    try {
+        auto &instruction = this->instructions.at(this->instruction_ptr);
+        this->instruction_ptr++;
         this->instr_arg = instruction.arg.get();
         try {
             (this->*instruction.func)();
@@ -19,6 +22,14 @@ void AVM::run() {
             e.set_line(instruction.line_number);
             throw;
         }
+    } catch (std::out_of_range) {
+        throw AVMException(Runtime, "Unexpected end of instructions (missing exit?)");
+    }
+}
+
+void AVM::run() {
+    while (this->running) {
+        this->step();
     }
 }
 
@@ -104,5 +115,5 @@ void AVM::print() {
 }
 
 void AVM::exit() {
-    this->exit_flag = true;
+    this->running = false;
 }

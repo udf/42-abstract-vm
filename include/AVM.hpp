@@ -12,7 +12,6 @@
 
 class AVM {
   private:
-    AVM() = delete;
     AVM(const AVM &other) = delete;
     AVM &operator=(const AVM &other) = delete;
 
@@ -92,23 +91,17 @@ class AVM {
 
     // Runtime
     std::vector<ParsedInstruction> instructions;
+    size_t instruction_ptr = 0;
 
     IOperand const *instr_arg = nullptr;
     std::vector<operand_uptr> stack;
-    bool exit_flag = false;
+    bool running = true;
 
   public:
-    // instruction value_type(value)
-    struct Line {
-        size_t line_number;
-        std::string instruction;
-        // TODO: put these in an optional
-        std::string value_type;
-        std::string value;
-    };
-
-    AVM(std::vector<Line> &lines);
+    AVM();
     ~AVM();
 
+    void load_line(std::string &line, size_t line_number = 0);
+    void step();
     void run();
 };
