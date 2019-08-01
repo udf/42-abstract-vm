@@ -13,8 +13,8 @@ enum eAVMException {
 class AVMException : public std::exception {
   public:
     constexpr static const char *const TypeName[eAVMException_MAX] = {
-      "Lexer",
-      "Parser",
+      "Lex",
+      "Parse",
       "Runtime",
       "Internal"
     };
