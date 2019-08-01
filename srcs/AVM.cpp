@@ -60,8 +60,13 @@ void AVM::do_binary_op(F f) {
     auto left = std::move(this->stack.back());
     this->stack.pop_back();
 
-    auto result = f(*left, *right);
-    this->stack.emplace_back(result);
+    try {
+        auto result = f(*left, *right);
+        this->stack.emplace_back(result);
+    } catch (AVMException &e) {
+        e.set_type(Runtime);
+        throw;
+    }
 }
 
 void AVM::push() {
