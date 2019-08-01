@@ -22,6 +22,7 @@ class AVM {
 
 
     // Instructions
+    void _assert(bool condition, std::string info);
     void push();
     void pop();
     void dump();

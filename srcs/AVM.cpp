@@ -36,14 +36,18 @@ void AVM::run() {
     }
 }
 
+void AVM::_assert(bool condition, std::string info) {
+    if (!condition) {
+        throw AVMException(Runtime, info);
+    }
+}
+
 template<typename F>
 void AVM::do_binary_op(F f) {
-    if (this->stack.size() < 2) {
-        throw AVMException(
-            Runtime,
-            "binary operation with less than two values on the stack"
-        );
-    }
+    _assert(
+        this->stack.size() >= 2,
+        "binary operation with less than two values on the stack"
+    );
 
     auto right = std::move(this->stack.back());
     this->stack.pop_back();
@@ -60,8 +64,7 @@ void AVM::push() {
 }
 
 void AVM::pop() {
-    if (this->stack.empty())
-        throw AVMException(Runtime, "pop on empty stack");
+    _assert(!this->stack.empty(), "pop on empty stack");
     this->stack.pop_back();
 }
 
@@ -107,11 +110,9 @@ void AVM::mod() {
 }
 
 void AVM::print() {
-    if (this->stack.size() < 1)
-        throw AVMException(Runtime, "print on empty stack");
+    _assert(this->stack.size() >= 1, "print on empty stack");
     auto &item = *this->stack.back();
-    if (item.getType() != Int8)
-        throw AVMException(Runtime, "print on non int8 variable");
+    _assert(item.getType() != Int8, "print on non int8 variable");
     // TODO: figure out a way to directly use the type of an Int8 instead of respecifying it
     auto value = std::get<int8_t>(item.getValue());
     std::cout << static_cast<char>(value);
