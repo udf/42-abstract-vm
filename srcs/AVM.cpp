@@ -117,7 +117,7 @@ void AVM::mod() {
 void AVM::print() {
     _assert(this->stack.size() >= 1, "print on empty stack");
     auto &item = *this->stack.back();
-    _assert(item.getType() != Int8, "print on non int8 variable");
+    _assert(item.getType() == Int8, "print on non int8 variable");
     // TODO: figure out a way to directly use the type of an Int8 instead of respecifying it
     auto value = std::get<int8_t>(item.getValue());
     std::cout << static_cast<char>(value);
