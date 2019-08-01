@@ -1,4 +1,5 @@
 #include "AVM.hpp"
+#include <set>
 
 const AVM::InstrBuilders::FuncData AVM::InstrBuilders::single = {
     &InstrBuilders::parse_single,
@@ -106,16 +107,21 @@ auto AVM::parse_line(std::string &line) -> std::optional<ParsedInstruction> {
         longest_match = std::max(longest_match, match_pos);
     }
 
-    // TODO: collect into set to avoid dupes
-    std::string info = "Expected ";
+    std::set<const char *> expected_tokens;
     for (size_t i = 0; i < matches.size(); i++) {
         auto& [matched, match_pos] = matches[i];
         if (match_pos != longest_match)
             continue;
-        info += sTokenNames[builders[i]->pattern[longest_match]];
-        info += " ";
+        expected_tokens.insert(sTokenNames[builders[i]->pattern[longest_match]]);
     }
-    info += "after";
+
+    std::string info = "Expected one of the following: ";
+    for (const char *token : expected_tokens) {
+        info += token;
+        info += ',';
+    }
+    info.pop_back();
+    info += " after";
 
     const tToken &last_token = tokens[longest_match - 1];
     throw AVMException(Parser, info)
