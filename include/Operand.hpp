@@ -11,18 +11,18 @@
 
 namespace Operand {
 
-template<typename T, eOperandType ENUM_TYPE>
+template<eOperandType ENUM_TYPE>
 class Operand;
 
-using Int8 = Operand<int8_t, eOperandType::Int8>;
-using Int16 = Operand<int16_t, eOperandType::Int16>;
-using Int32 = Operand<int32_t, eOperandType::Int32>;
-using Float = Operand<float, eOperandType::Float>;
-using Double = Operand<double, eOperandType::Double>;
+using Int8 = Operand<eOperandType::Int8>;
+using Int16 = Operand<eOperandType::Int16>;
+using Int32 = Operand<eOperandType::Int32>;
+using Float = Operand<eOperandType::Float>;
+using Double = Operand<eOperandType::Double>;
 
 template<typename T, typename... Ts>
 constexpr bool is_one_of_vt() {
-    return std::disjunction_v<std::is_same<T, typename Ts::value_type>...>;
+    return std::disjunction_v<std::is_same<T, typename Ts::T>...>;
 }
 
 template<typename F, typename V>
@@ -52,8 +52,12 @@ V var_op(const V &x, const V &y, F f = F()) {
     return std::visit(visitor, x, y);
 }
 
-template<typename T, eOperandType ENUM_TYPE>
+template<eOperandType ENUM_TYPE>
 class Operand : public IOperand {
+  public:
+    using this_type = Operand<ENUM_TYPE>;
+    using T = typename tOperandType<ENUM_TYPE>::type;
+
   private:
     Operand(const Operand &) = delete;
     Operand &operator=(const Operand &) = delete;
@@ -62,9 +66,6 @@ class Operand : public IOperand {
     std::string str_value;
 
   public:
-    using value_type = T;
-    using this_type = Operand<T, ENUM_TYPE>;
-
     Operand() {
     }
 

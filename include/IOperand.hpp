@@ -2,8 +2,6 @@
 #include <string>
 #include <variant>
 
-// TODO: tie enum and type together and reference those bindings instead of
-// repeating the enum+type in Operand.hpp
 enum eOperandType {
     Int8,
     Int16,
@@ -13,6 +11,7 @@ enum eOperandType {
     eOperandTypeMAX
 };
 
+// TODO: move this into tOperandType
 static const char *sOperandName[eOperandTypeMAX] = {
     "int8",
     "int16",
@@ -20,6 +19,25 @@ static const char *sOperandName[eOperandTypeMAX] = {
     "float",
     "double"
 };
+
+template<eOperandType>
+struct tOperandType;
+
+template<>
+struct tOperandType<Int8> { using type = int8_t; };
+
+template<>
+struct tOperandType<Int16> { using type = int16_t; };
+
+template<>
+struct tOperandType<Int32> { using type = int32_t; };
+
+template<>
+struct tOperandType<Float> { using type = float; };
+
+template<>
+struct tOperandType<Double> { using type = double; };
+
 
 class IOperand {
   public:
