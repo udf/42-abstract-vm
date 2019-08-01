@@ -40,7 +40,7 @@ int main(int argc, char const *argv[]) {
 
         avm.run();
     } catch (AVMException &e) {
-        std::cerr << "Yo dawg, some shit fucked up: " << e.what() << std::endl;
+        std::cerr << e.what() << std::endl;
     }
 
     return 0;

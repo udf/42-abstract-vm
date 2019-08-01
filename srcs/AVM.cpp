@@ -7,7 +7,10 @@ AVM::~AVM() {
 }
 
 void AVM::load_line(std::string &line, size_t line_number) {
-    this->instructions.push_back(this->parse_line(line));
+    auto instruction = this->parse_line(line);
+    if (!instruction)
+        return;
+    this->instructions.push_back(std::move(instruction.value()));
     this->instructions.back().line_number = line_number;
 }
 

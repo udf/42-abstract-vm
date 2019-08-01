@@ -74,13 +74,15 @@ size_t first_diff(std::vector<T> s1, std::vector<U> s2, F func) {
     return min_len;
 }
 
-auto AVM::parse_line(std::string &line) -> ParsedInstruction {
+auto AVM::parse_line(std::string &line) -> std::optional<ParsedInstruction> {
     static const std::vector<const InstrBuilders::FuncData *> builders = {
         &InstrBuilders::single,
         &InstrBuilders::val_arg
     };
 
     auto tokens = AVM::lex_line(line);
+    if (tokens.empty())
+        return std::nullopt;
 
     // TODO: debug flag
     std::cout << "Input: " << line << std::endl;

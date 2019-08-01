@@ -86,7 +86,7 @@ class AVM {
         static const FuncData val_arg;
     };
 
-    static ParsedInstruction parse_line(std::string &line);
+    static std::optional<ParsedInstruction> parse_line(std::string &line);
 
 
     // Runtime
