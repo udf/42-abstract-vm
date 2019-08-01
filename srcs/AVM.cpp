@@ -82,8 +82,7 @@ void AVM::dump() {
     std::cout << "type(value) [precision]" << std::endl;
     for (auto it = this->stack.rbegin(); it != this->stack.rend(); ++it) {
         auto &item = **it;
-        std::cout << item.getTypeName();
-        std::cout << "(" << item.toString() << ")";
+        std::cout << item.toPrettyString();
         std::cout << " [" << item.getPrecision() << "]";
         std::cout << std::endl;
     }
