@@ -2,12 +2,12 @@
 
 const AVM::InstrBuilders::FuncData AVM::InstrBuilders::single = {
     &InstrBuilders::parse_single,
-    {IDENTIFIER}
+    {IDENTIFIER, END}
 };
 
 const AVM::InstrBuilders::FuncData AVM::InstrBuilders::val_arg = {
     &InstrBuilders::parse_val_arg,
-    {IDENTIFIER, IDENTIFIER, L_BRACKET, NUMBER, R_BRACKET}
+    {IDENTIFIER, IDENTIFIER, L_BRACKET, NUMBER, R_BRACKET, END}
 };
 
 AVM::instr_fptr AVM::InstrBuilders::get_func(instr_mapping &m, tToken &token) {
@@ -70,7 +70,7 @@ auto AVM::parse_line(std::string &line) -> std::optional<ParsedInstruction> {
     };
 
     auto tokens = AVM::lex_line(line);
-    if (tokens.empty())
+    if (tokens.size() == 1 && tokens[0].type == END)
         return std::nullopt;
 
     // TODO: debug flag
@@ -92,11 +92,7 @@ auto AVM::parse_line(std::string &line) -> std::optional<ParsedInstruction> {
                 return token.type == expected_type;
             }
         );
-        // The pattern matched if no difference was found between the pattern in input
-        // Note that the lengths need to be compared because an input longer than the pattern
-        // can make the difference appear after the pattern
-        // An end token would remove the need for the length check
-        bool matched = i >= builder->pattern.size() && tokens.size() == builder->pattern.size();
+        bool matched = i >= builder->pattern.size();
         matches.push_back({matched, i});
         if (matched)
             match_count++;
@@ -130,7 +126,7 @@ auto AVM::parse_line(std::string &line) -> std::optional<ParsedInstruction> {
     }
     info += "after";
 
-    tToken &last_token = tokens[longest_match];
+    tToken &last_token = tokens[longest_match - 1];
     throw AVMException(Parser, info)
         .set_hint(last_token.value)
         .set_column(last_token.col_pos + last_token.value.size());

@@ -1,6 +1,5 @@
 #include "AVM.hpp"
 
-// TODO: end token
 const char *AVM::sTokenNames[eTokens::_LENGTH] = {
     "WHITESPACE",
     "IDENTIFIER",
@@ -8,6 +7,7 @@ const char *AVM::sTokenNames[eTokens::_LENGTH] = {
     "L_BRACKET",
     "R_BRACKET",
     "COMMENT_START",
+    "END"
 };
 
 const std::array<std::regex, AVM::eTokens::_LENGTH> AVM::rTokens = {
@@ -17,6 +17,7 @@ const std::array<std::regex, AVM::eTokens::_LENGTH> AVM::rTokens = {
     std::regex(R"(^\()"),
     std::regex(R"(^\))"),
     std::regex(R"(^;)"),
+    std::regex(R"(^$)"),
 };
 
 auto AVM::lex_line(std::string line) -> std::vector<tToken> {
@@ -69,5 +70,9 @@ auto AVM::lex_line(std::string line) -> std::vector<tToken> {
         line.erase(0, token.value.length());
     }
 
+    tToken token;
+    token.col_pos = col_pos;
+    token.type = END;
+    tokens.push_back(token);
     return tokens;
 }

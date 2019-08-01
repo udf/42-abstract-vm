@@ -45,6 +45,7 @@ class AVM {
         L_BRACKET,
         R_BRACKET,
         COMMENT_START,
+        END,
         _LENGTH
     };
 
