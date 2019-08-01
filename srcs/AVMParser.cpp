@@ -10,7 +10,7 @@ const AVM::InstrBuilders::FuncData AVM::InstrBuilders::val_arg = {
     {IDENTIFIER, IDENTIFIER, L_BRACKET, NUMBER, R_BRACKET, END}
 };
 
-AVM::instr_fptr AVM::InstrBuilders::get_func(instr_mapping &m, tToken &token) {
+AVM::instr_fptr AVM::InstrBuilders::get_func(instr_mapping &m, const tToken &token) {
     auto it = m.find(token.value);
     if (it == m.end())
         throw AVMException(Parser, "Unknown instruction:")
@@ -19,7 +19,7 @@ AVM::instr_fptr AVM::InstrBuilders::get_func(instr_mapping &m, tToken &token) {
     return (*it).second;
 }
 
-auto AVM::InstrBuilders::parse_single(std::vector<tToken> &tokens) -> ParsedInstruction {
+auto AVM::InstrBuilders::parse_single(const std::vector<tToken> &tokens) -> ParsedInstruction {
     static instr_mapping mapping{
         {"pop", &AVM::pop},
         {"dump", &AVM::dump},
@@ -39,7 +39,7 @@ auto AVM::InstrBuilders::parse_single(std::vector<tToken> &tokens) -> ParsedInst
     return p;
 }
 
-auto AVM::InstrBuilders::parse_val_arg(std::vector<tToken> &tokens) -> ParsedInstruction {
+auto AVM::InstrBuilders::parse_val_arg(const std::vector<tToken> &tokens) -> ParsedInstruction {
     static instr_mapping mapping{
         {"push", &AVM::push},
         {"assert", &AVM::assert},
@@ -88,7 +88,7 @@ auto AVM::parse_line(std::string &line) -> std::optional<ParsedInstruction> {
         size_t i = first_diff(
             builder->pattern,
             tokens,
-            [](eTokens &expected_type, tToken &token) {
+            [](const eTokens &expected_type, const tToken &token) {
                 return token.type == expected_type;
             }
         );
@@ -126,7 +126,7 @@ auto AVM::parse_line(std::string &line) -> std::optional<ParsedInstruction> {
     }
     info += "after";
 
-    tToken &last_token = tokens[longest_match - 1];
+    const tToken &last_token = tokens[longest_match - 1];
     throw AVMException(Parser, info)
         .set_hint(last_token.value)
         .set_column(last_token.col_pos + last_token.value.size());

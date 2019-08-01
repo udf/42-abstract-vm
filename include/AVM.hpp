@@ -59,7 +59,7 @@ class AVM {
         std::string value;
     };
 
-    static std::vector<tToken> lex_line(std::string line);
+    static const std::vector<tToken> lex_line(std::string line);
 
 
     // Parser
@@ -74,10 +74,10 @@ class AVM {
     };
 
     struct InstrBuilders {
-        static instr_fptr get_func(instr_mapping &m, tToken &token);
+        static instr_fptr get_func(instr_mapping &m, const tToken &token);
 
-        static ParsedInstruction parse_single(std::vector<tToken> &tokens);
-        static ParsedInstruction parse_val_arg(std::vector<tToken> &tokens);
+        static ParsedInstruction parse_single(const std::vector<tToken> &tokens);
+        static ParsedInstruction parse_val_arg(const std::vector<tToken> &tokens);
 
         using fptr = decltype(&InstrBuilders::parse_single);
         struct FuncData {

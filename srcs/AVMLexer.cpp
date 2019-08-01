@@ -20,7 +20,7 @@ const std::array<std::regex, AVM::eTokens::_LENGTH> AVM::rTokens = {
     std::regex(R"(^$)"),
 };
 
-auto AVM::lex_line(std::string line) -> std::vector<tToken> {
+auto AVM::lex_line(std::string line) -> const std::vector<tToken> {
     std::vector<tToken> tokens;
     size_t col_pos = 1;
 
