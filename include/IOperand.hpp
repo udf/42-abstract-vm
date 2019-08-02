@@ -63,6 +63,7 @@ class IOperand {
     virtual ~IOperand(void) {
     }
 
+
     using operand_variant =
         std::variant<int8_t, int16_t, int32_t, float, double>;
 
