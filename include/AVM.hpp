@@ -74,10 +74,13 @@ class AVM {
     };
 
     struct InstrBuilders {
-        static auto get_func(instr_mapping &m, const tToken &token) -> instr_fptr;
+        static auto get_func(instr_mapping &m, const tToken &token)
+            -> instr_fptr;
 
-        static auto parse_single(const std::vector<tToken> &tokens) -> ParsedInstruction;
-        static auto parse_val_arg(const std::vector<tToken> &tokens) -> ParsedInstruction;
+        static auto parse_single(const std::vector<tToken> &tokens)
+            -> ParsedInstruction;
+        static auto parse_val_arg(const std::vector<tToken> &tokens)
+            -> ParsedInstruction;
 
         using fptr = decltype(&InstrBuilders::parse_single);
         struct FuncData {
@@ -89,7 +92,8 @@ class AVM {
         static const FuncData val_arg;
     };
 
-    static auto parse_line(std::string &line) -> std::optional<ParsedInstruction>;
+    static auto parse_line(std::string &line)
+        -> std::optional<ParsedInstruction>;
 
 
     // Runtime

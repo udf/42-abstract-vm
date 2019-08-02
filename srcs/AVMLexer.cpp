@@ -43,7 +43,10 @@ auto AVM::lex_line(std::string line) -> const std::vector<tToken> {
 
             token.col_pos = col_pos;
             token.type = static_cast<eTokens>(i);
-            token.value = line.substr(0, static_cast<size_t>(matches[0].length()));
+            token.value = line.substr(
+                0,
+                static_cast<size_t>(matches[0].length())
+            );
         }
 
         if (matched_tokens.size() == 0) {

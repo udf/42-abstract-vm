@@ -21,7 +21,10 @@ auto AVM::load_line(std::string &line, size_t line_number) -> void {
 
 auto AVM::step() -> void {
     if (this->instruction_ptr > this->instructions.size())
-        throw AVMException(Runtime, "Unexpected end of instructions (missing exit?)");
+        throw AVMException(
+            Runtime,
+            "Unexpected end of instructions (missing exit?)"
+        );
 
     auto &instruction = this->instructions.at(this->instruction_ptr);
 

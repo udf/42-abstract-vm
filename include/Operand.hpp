@@ -166,7 +166,9 @@ class Operand : public IOperand {
         return this->value;
     }
 
-    auto convertVariant(operand_variant value) const -> operand_variant override {
+    auto convertVariant(operand_variant value) const
+        -> operand_variant override
+    {
         return std::visit(
             [](auto value) {
                 return static_cast<T>(value);
@@ -175,7 +177,9 @@ class Operand : public IOperand {
         );
     }
 
-    auto createFromVariant(operand_variant value) const -> IOperand const * override {
+    auto createFromVariant(operand_variant value) const
+        -> IOperand const * override
+    {
         return new this_type(std::get<T>(value));
     }
 

@@ -28,7 +28,9 @@ AVMException::~AVMException() {
 }
 
 template<typename T>
-auto AVMException::set_member(T AVMException::* member, T value) -> AVMException & {
+auto AVMException::set_member(T AVMException::* member, T value)
+    -> AVMException &
+{
     this->*member = value;
     this->build_pretty_info();
     return *this;

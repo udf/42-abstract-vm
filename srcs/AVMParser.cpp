@@ -11,7 +11,9 @@ const AVM::InstrBuilders::FuncData AVM::InstrBuilders::val_arg = {
     {IDENTIFIER, IDENTIFIER, L_BRACKET, NUMBER, R_BRACKET, END}
 };
 
-auto AVM::InstrBuilders::get_func(instr_mapping &m, const tToken &token) -> instr_fptr {
+auto AVM::InstrBuilders::get_func(instr_mapping &m, const tToken &token)
+    -> instr_fptr
+{
     auto it = m.find(token.value);
     if (it == m.end())
         throw AVMException(Parser, "Unknown instruction:")
@@ -20,7 +22,9 @@ auto AVM::InstrBuilders::get_func(instr_mapping &m, const tToken &token) -> inst
     return (*it).second;
 }
 
-auto AVM::InstrBuilders::parse_single(const std::vector<tToken> &tokens) -> ParsedInstruction {
+auto AVM::InstrBuilders::parse_single(const std::vector<tToken> &tokens)
+    -> ParsedInstruction
+{
     static instr_mapping mapping{
         {"pop", &AVM::pop},
         {"dump", &AVM::dump},
@@ -40,7 +44,9 @@ auto AVM::InstrBuilders::parse_single(const std::vector<tToken> &tokens) -> Pars
     return p;
 }
 
-auto AVM::InstrBuilders::parse_val_arg(const std::vector<tToken> &tokens) -> ParsedInstruction {
+auto AVM::InstrBuilders::parse_val_arg(const std::vector<tToken> &tokens)
+    -> ParsedInstruction
+{
     static instr_mapping mapping{
         {"push", &AVM::push},
         {"assert", &AVM::assert},
@@ -91,7 +97,10 @@ auto AVM::parse_line(std::string &line) -> std::optional<ParsedInstruction> {
     }
 
     if (match_count > 1) {
-        throw AVMException(Internal, "fix me: more than one builder pattern matched");
+        throw AVMException(
+            Internal,
+            "fix me: more than one builder pattern matched"
+        );
     }
 
     // Call the environment builder if we got a match
@@ -112,7 +121,9 @@ auto AVM::parse_line(std::string &line) -> std::optional<ParsedInstruction> {
         auto& [matched, match_pos] = matches[i];
         if (match_pos != longest_match)
             continue;
-        expected_tokens.insert(sTokenNames[builders[i]->pattern[longest_match]]);
+        expected_tokens.insert(
+            sTokenNames[builders[i]->pattern[longest_match]]
+        );
     }
 
     std::string info = "Expected one of the following: ";
