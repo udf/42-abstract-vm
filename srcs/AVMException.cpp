@@ -28,38 +28,38 @@ AVMException::~AVMException() {
 }
 
 template<typename T>
-AVMException &AVMException::set_member(T AVMException::* member, T value) {
+auto AVMException::set_member(T AVMException::* member, T value) -> AVMException & {
     this->*member = value;
     this->build_pretty_info();
     return *this;
 }
 
-AVMException &AVMException::set_type(eAVMException type) {
+auto AVMException::set_type(eAVMException type) -> AVMException &{
     return set_member(&AVMException::type, type);
 }
 
-AVMException &AVMException::set_info(std::string info) {
+auto AVMException::set_info(std::string info) -> AVMException &{
     return set_member(&AVMException::info, info);
 }
 
-AVMException &AVMException::set_line(size_t line) {
+auto AVMException::set_line(size_t line) -> AVMException &{
     return set_member(&AVMException::line, line);
 }
 
-AVMException &AVMException::set_column(size_t column) {
+auto AVMException::set_column(size_t column) -> AVMException &{
     return set_member(&AVMException::column, column);
 }
 
-AVMException &AVMException::set_hint(std::string hint) {
+auto AVMException::set_hint(std::string hint) -> AVMException &{
     return set_member(&AVMException::hint, hint);
 }
 
-const char *AVMException::what() const throw() {
+auto AVMException::what() const throw() -> const char *{
     return this->pretty_info.c_str();
 }
 
 // {type} error [on line {line}[, column {column}]]: info "{hint}"
-void AVMException::build_pretty_info() {
+auto AVMException::build_pretty_info() -> void{
     this->pretty_info = std::string(this->TypeName[this->type]) + " error";
     if (this->line) {
         this->pretty_info += " on line " + std::to_string(this->line);

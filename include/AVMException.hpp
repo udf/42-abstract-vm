@@ -24,21 +24,21 @@ class AVMException : public std::exception {
     AVMException(const AVMException &other);
     ~AVMException();
 
-    AVMException &set_type(eAVMException type);
-    AVMException &set_info(std::string info);
-    AVMException &set_line(size_t line);
-    AVMException &set_column(size_t column);
-    AVMException &set_hint(std::string hint);
+    auto set_type(eAVMException type) -> AVMException &;
+    auto set_info(std::string info) -> AVMException &;
+    auto set_line(size_t line) -> AVMException &;
+    auto set_column(size_t column) -> AVMException &;
+    auto set_hint(std::string hint) -> AVMException &;
 
-    const char *what() const throw();
+    auto what() const throw() -> const char *;
 
   private:
     AVMException();
-    AVMException &operator=(const AVMException &other);
+    auto operator=(const AVMException &other) -> AVMException &;
 
-    void build_pretty_info();
+    auto build_pretty_info() -> void;
     template<typename T>
-    AVMException &set_member(T AVMException::* member, T value);
+    auto set_member(T AVMException::* member, T value) -> AVMException &;
 
     std::string pretty_info;
 

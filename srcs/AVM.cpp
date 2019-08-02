@@ -6,7 +6,7 @@ AVM::AVM() {
 AVM::~AVM() {
 }
 
-void AVM::load_line(std::string &line, size_t line_number) {
+auto AVM::load_line(std::string &line, size_t line_number) -> void {
     try {
         auto instruction = this->parse_line(line);
         if (!instruction)
@@ -19,7 +19,7 @@ void AVM::load_line(std::string &line, size_t line_number) {
     }
 }
 
-void AVM::step() {
+auto AVM::step() -> void {
     if (this->instruction_ptr > this->instructions.size())
         throw AVMException(Runtime, "Unexpected end of instructions (missing exit?)");
 
@@ -35,20 +35,20 @@ void AVM::step() {
     }
 }
 
-void AVM::run() {
+auto AVM::run() -> void{
     while (this->running) {
         this->step();
     }
 }
 
-void AVM::_assert(bool condition, std::string info) {
+auto AVM::_assert(bool condition, std::string info) -> void {
     if (!condition) {
         throw AVMException(Runtime, info);
     }
 }
 
 template<typename F>
-void AVM::do_binary_op(F f) {
+auto AVM::do_binary_op(F f) -> void {
     _assert(
         this->stack.size() >= 2,
         "binary operation with less than two values on the stack"
@@ -69,16 +69,16 @@ void AVM::do_binary_op(F f) {
     }
 }
 
-void AVM::push() {
+auto AVM::push() -> void {
     this->stack.emplace_back(instr_arg->clone());
 }
 
-void AVM::pop() {
+auto AVM::pop() -> void {
     _assert(!this->stack.empty(), "pop on empty stack");
     this->stack.pop_back();
 }
 
-void AVM::dump() {
+auto AVM::dump() -> void {
     std::cout << "type(value) [precision]" << std::endl;
     for (auto it = this->stack.rbegin(); it != this->stack.rend(); ++it) {
         auto &item = **it;
@@ -88,7 +88,7 @@ void AVM::dump() {
     }
 }
 
-void AVM::assert() {
+auto AVM::assert() -> void {
     if (*instr_arg == *stack.back())
         return;
     std::string info = "Assertion error, expected \"";
@@ -97,27 +97,27 @@ void AVM::assert() {
         .set_hint(stack.back().get()->toPrettyString());
 }
 
-void AVM::add() {
+auto AVM::add() -> void {
     this->do_binary_op<std::plus<>>();
 }
 
-void AVM::sub() {
+auto AVM::sub() -> void {
     this->do_binary_op<std::minus<>>();
 }
 
-void AVM::mul() {
+auto AVM::mul() -> void {
     this->do_binary_op<std::multiplies<>>();
 }
 
-void AVM::div() {
+auto AVM::div() -> void {
     this->do_binary_op<std::divides<>>();
 }
 
-void AVM::mod() {
+auto AVM::mod() -> void {
     this->do_binary_op<std::modulus<>>();
 }
 
-void AVM::print() {
+auto AVM::print() -> void {
     _assert(this->stack.size() >= 1, "print on empty stack");
     auto &item = *this->stack.back();
     _assert(item.getType() == Int8, "print on non int8 variable");
@@ -125,6 +125,6 @@ void AVM::print() {
     std::cout << static_cast<char>(value);
 }
 
-void AVM::exit() {
+auto AVM::exit() -> void {
     this->running = false;
 }

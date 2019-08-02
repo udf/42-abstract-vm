@@ -11,7 +11,7 @@ const AVM::InstrBuilders::FuncData AVM::InstrBuilders::val_arg = {
     {IDENTIFIER, IDENTIFIER, L_BRACKET, NUMBER, R_BRACKET, END}
 };
 
-AVM::instr_fptr AVM::InstrBuilders::get_func(instr_mapping &m, const tToken &token) {
+auto AVM::InstrBuilders::get_func(instr_mapping &m, const tToken &token) -> instr_fptr {
     auto it = m.find(token.value);
     if (it == m.end())
         throw AVMException(Parser, "Unknown instruction:")

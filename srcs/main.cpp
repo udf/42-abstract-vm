@@ -22,7 +22,7 @@ auto read_file(std::istream &stream, AVM &avm) {
     }
 }
 
-int main(int argc, char const *argv[]) {
+auto main(int argc, char const *argv[]) -> int {
     if (argc > 2) {
         std::cerr << "Too many arguments provided." << std::endl;
         return 1;

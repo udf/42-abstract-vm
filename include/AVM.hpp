@@ -14,27 +14,27 @@
 class AVM {
   private:
     AVM(const AVM &other) = delete;
-    AVM &operator=(const AVM &other) = delete;
+    auto operator=(const AVM &other) -> AVM & = delete;
 
 
     // Internal functions
     template<typename F>
-    void do_binary_op(F f = F());
+    auto do_binary_op(F f = F()) -> void;
 
 
     // Instructions
-    void _assert(bool condition, std::string info);
-    void push();
-    void pop();
-    void dump();
-    void assert();
-    void add();
-    void sub();
-    void mul();
-    void div();
-    void mod();
-    void print();
-    void exit();
+    auto _assert(bool condition, std::string info) -> void;
+    auto push() -> void;
+    auto pop() -> void;
+    auto dump() -> void;
+    auto assert() -> void;
+    auto add() -> void;
+    auto sub() -> void;
+    auto mul() -> void;
+    auto div() -> void;
+    auto mod() -> void;
+    auto print() -> void;
+    auto exit() -> void;
 
 
     // Lexer
@@ -59,7 +59,7 @@ class AVM {
         std::string value;
     };
 
-    static const std::vector<tToken> lex_line(std::string line);
+    static auto lex_line(std::string line) -> const std::vector<tToken>;
 
 
     // Parser
@@ -74,10 +74,10 @@ class AVM {
     };
 
     struct InstrBuilders {
-        static instr_fptr get_func(instr_mapping &m, const tToken &token);
+        static auto get_func(instr_mapping &m, const tToken &token) -> instr_fptr;
 
-        static ParsedInstruction parse_single(const std::vector<tToken> &tokens);
-        static ParsedInstruction parse_val_arg(const std::vector<tToken> &tokens);
+        static auto parse_single(const std::vector<tToken> &tokens) -> ParsedInstruction;
+        static auto parse_val_arg(const std::vector<tToken> &tokens) -> ParsedInstruction;
 
         using fptr = decltype(&InstrBuilders::parse_single);
         struct FuncData {
@@ -89,7 +89,7 @@ class AVM {
         static const FuncData val_arg;
     };
 
-    static std::optional<ParsedInstruction> parse_line(std::string &line);
+    static auto parse_line(std::string &line) -> std::optional<ParsedInstruction>;
 
 
     // Runtime
@@ -104,7 +104,7 @@ class AVM {
     AVM();
     ~AVM();
 
-    void load_line(std::string &line, size_t line_number = 0);
-    void step();
-    void run();
+    auto load_line(std::string &line, size_t line_number = 0) -> void;
+    auto step() -> void;
+    auto run() -> void;
 };

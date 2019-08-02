@@ -7,13 +7,13 @@
 class OperandFactory {
   private:
     OperandFactory(const OperandFactory &other);
-    OperandFactory &operator=(const OperandFactory &other);
+    auto operator=(const OperandFactory &other) -> OperandFactory &;
 
-    IOperand const *createInt8(std::string const &value) const;
-    IOperand const *createInt16(std::string const &value) const;
-    IOperand const *createInt32(std::string const &value) const;
-    IOperand const *createFloat(std::string const &value) const;
-    IOperand const *createDouble(std::string const &value) const;
+    auto createInt8(std::string const &value) const -> IOperand const *;
+    auto createInt16(std::string const &value) const -> IOperand const *;
+    auto createInt32(std::string const &value) const -> IOperand const *;
+    auto createFloat(std::string const &value) const -> IOperand const *;
+    auto createDouble(std::string const &value) const -> IOperand const *;
 
     using createOperandFunc = decltype(&OperandFactory::createInt8);
 
@@ -25,12 +25,12 @@ class OperandFactory {
     OperandFactory();
     ~OperandFactory();
 
-    IOperand const *createOperand(
+    auto createOperand(
         eOperandType type,
         std::string const &value
-    ) const;
-    IOperand const *createOperand(
+    ) const -> IOperand const *;
+    auto createOperand(
         const char *type,
         std::string const &value
-    ) const;
+    ) const -> IOperand const *;
 };

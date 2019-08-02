@@ -22,17 +22,17 @@ OperandFactory::OperandFactory() {
 OperandFactory::~OperandFactory() {
 }
 
-IOperand const *OperandFactory::createOperand(
+auto OperandFactory::createOperand(
     eOperandType type,
     std::string const &value
-) const {
+) const -> IOperand const * {
     return (this->*createFuncs[type])(value);
 }
 
-IOperand const *OperandFactory::createOperand(
+auto OperandFactory::createOperand(
     const char *type,
     std::string const &value
-) const {
+) const -> IOperand const * {
     auto it = name_mapping.find(type);
     if (it == name_mapping.end()) {
         throw AVMException("Unknown operand type:")
@@ -41,22 +41,22 @@ IOperand const *OperandFactory::createOperand(
     return this->createOperand((*it).second, value);
 }
 
-IOperand const *OperandFactory::createInt8(std::string const &value) const {
+auto OperandFactory::createInt8(std::string const &value) const -> IOperand const * {
     return new Operand::Int8(value);
 }
 
-IOperand const *OperandFactory::createInt16(std::string const &value) const {
+auto OperandFactory::createInt16(std::string const &value) const -> IOperand const * {
     return new Operand::Int16(value);
 }
 
-IOperand const *OperandFactory::createInt32(std::string const &value) const {
+auto OperandFactory::createInt32(std::string const &value) const -> IOperand const * {
     return new Operand::Int32(value);
 }
 
-IOperand const *OperandFactory::createFloat(std::string const &value) const {
+auto OperandFactory::createFloat(std::string const &value) const -> IOperand const * {
     return new Operand::Float(value);
 }
 
-IOperand const *OperandFactory::createDouble(std::string const &value) const {
+auto OperandFactory::createDouble(std::string const &value) const -> IOperand const * {
     return new Operand::Double(value);
 }

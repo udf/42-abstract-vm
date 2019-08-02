@@ -21,12 +21,12 @@ using Float = Operand<eOperandType::Float>;
 using Double = Operand<eOperandType::Double>;
 
 template<typename T, typename... Ts>
-constexpr bool is_one_of_vt() {
+constexpr auto is_one_of_vt() -> bool {
     return std::disjunction_v<std::is_same<T, typename Ts::T>...>;
 }
 
 template<typename F, typename V>
-V var_op(const V &x, const V &y, F f = F()) {
+auto var_op(const V &x, const V &y, F f = F()) -> V {
     const auto visitor = [&f](auto x, auto y) -> V {
         using x_t = decltype(x);
 
@@ -60,7 +60,7 @@ class Operand : public IOperand {
 
   private:
     Operand(const Operand &) = delete;
-    Operand &operator=(const Operand &) = delete;
+    auto operator=(const Operand &) -> Operand & = delete;
 
     T value;
     std::string str_value;
@@ -95,16 +95,16 @@ class Operand : public IOperand {
         this->str_value = std::to_string(this->value);
     }
 
-    int getPrecision(void) const override {
+    auto getPrecision(void) const -> int override {
         return static_cast<int>(ENUM_TYPE);
     }
 
-    eOperandType getType(void) const override {
+    auto getType(void) const -> eOperandType override {
         return ENUM_TYPE;
     }
 
     template<typename F>
-    IOperand const *operand(IOperand const &rhs, F f = F()) const {
+    auto operand(IOperand const &rhs, F f = F()) const -> IOperand const * {
         operand_variant left = this->getValue();
         operand_variant right = rhs.getValue();
         IOperand const *factory = this;
@@ -120,41 +120,41 @@ class Operand : public IOperand {
         return factory->createFromVariant(result);
     }
 
-    IOperand const *operator+(IOperand const &rhs) const override {
+    auto operator+(IOperand const &rhs) const -> IOperand const * override {
         return operand<std::plus<>>(rhs);
     }
-    IOperand const *operator-(IOperand const &rhs) const override {
+    auto operator-(IOperand const &rhs) const -> IOperand const * override {
         return operand<std::minus<>>(rhs);
     }
-    IOperand const *operator*(IOperand const &rhs) const override {
+    auto operator*(IOperand const &rhs) const -> IOperand const * override {
         return operand<std::multiplies<>>(rhs);
     }
-    IOperand const *operator/(IOperand const &rhs) const override {
+    auto operator/(IOperand const &rhs) const -> IOperand const * override {
         return operand<divides<>>(rhs);
     }
-    IOperand const *operator%(IOperand const &rhs) const override {
+    auto operator%(IOperand const &rhs) const -> IOperand const * override {
         return operand<modulus<>>(rhs);
     }
 
-    bool operator==(IOperand const &rhs) const override {
+    auto operator==(IOperand const &rhs) const -> bool override {
         if (this->getType() != rhs.getType())
             return false;
         this_type const &rhs_t = static_cast<this_type const &>(rhs);
         return this->value == rhs_t.value;
     }
 
-    std::string const &toString(void) const override {
+    auto toString(void) const -> std::string const & override {
         return this->str_value;
     }
 
     ~Operand() override {
     }
 
-    const char *getTypeName() const override {
+    auto getTypeName() const -> const char * override {
         return tOperandType<ENUM_TYPE>::name;
     }
 
-    std::string toPrettyString() const override {
+    auto toPrettyString() const -> std::string override {
         std::string ret = this->getTypeName();
         ret += '(';
         ret += this->toString();
@@ -162,11 +162,11 @@ class Operand : public IOperand {
         return ret;
     }
 
-    operand_variant getValue() const override {
+    auto getValue() const -> operand_variant override {
         return this->value;
     }
 
-    operand_variant convertVariant(operand_variant value) const override {
+    auto convertVariant(operand_variant value) const -> operand_variant override {
         return std::visit(
             [](auto value) {
                 return static_cast<T>(value);
@@ -175,11 +175,11 @@ class Operand : public IOperand {
         );
     }
 
-    IOperand const *createFromVariant(operand_variant value) const override {
+    auto createFromVariant(operand_variant value) const -> IOperand const * override {
         return new this_type(std::get<T>(value));
     }
 
-    IOperand const *clone() const override {
+    auto clone() const -> IOperand const * override {
         return new this_type(this->value);
     }
 };
