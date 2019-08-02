@@ -44,6 +44,10 @@ struct tOperandType<Double> {
     constexpr static const char *name = "double";
 };
 
+template<eOperandType... Es>
+struct operand_variant_impl {
+    using type = std::variant<typename tOperandType<Es>::type...>;
+};
 
 class IOperand {
   public:
@@ -64,8 +68,7 @@ class IOperand {
     }
 
 
-    using operand_variant =
-        std::variant<int8_t, int16_t, int32_t, float, double>;
+    using operand_variant = operand_variant_impl<Int8, Int16, Int32, Float, Double>::type;
 
     virtual std::string toPrettyString() const = 0;
 
