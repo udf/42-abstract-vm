@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <variant>
+#include <utility>
 
 enum eOperandType {
     Int8,
@@ -10,6 +11,15 @@ enum eOperandType {
     Double,
     eOperandTypeMAX
 };
+
+using eOperandTypes = std::integer_sequence<
+    eOperandType,
+    Int8,
+    Int16,
+    Int32,
+    Float,
+    Double
+>;
 
 template<eOperandType>
 struct tOperandType;
@@ -44,8 +54,11 @@ struct tOperandType<Double> {
     constexpr static const char *name = "double";
 };
 
+template<typename T>
+struct operand_variant_impl;
+
 template<eOperandType... Es>
-struct operand_variant_impl {
+struct operand_variant_impl<std::integer_sequence<eOperandType, Es...>> {
     using type = std::variant<typename tOperandType<Es>::type...>;
 };
 
@@ -68,7 +81,7 @@ class IOperand {
     }
 
 
-    using operand_variant = operand_variant_impl<Int8, Int16, Int32, Float, Double>::type;
+    using operand_variant = operand_variant_impl<eOperandTypes>;
 
     virtual std::string toPrettyString() const = 0;
 
