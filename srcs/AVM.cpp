@@ -82,12 +82,14 @@ auto AVM::pop() -> void {
 }
 
 auto AVM::dump() -> void {
-    std::cout << "type(value) [precision]" << std::endl;
+    size_t i = 0;
+
     for (auto it = this->stack.rbegin(); it != this->stack.rend(); ++it) {
         auto &item = **it;
+        std::cout << i << ": ";
         std::cout << item.toPrettyString();
-        std::cout << " [" << item.getPrecision() << "]";
         std::cout << std::endl;
+        i++;
     }
 }
 
