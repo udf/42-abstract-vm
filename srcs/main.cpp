@@ -13,6 +13,7 @@ auto read_file(
     bool is_stdin = false
 ) {
     size_t line_number = 1;
+    std::vector<std::string> errors;
 
     while (stream.good()) {
         std::string line;
@@ -21,8 +22,21 @@ auto read_file(
         if (is_stdin && line == ";;")
             break;
 
-        avm.load_line(line, line_number);
+        try {
+            avm.load_line(line, line_number);
+        } catch (const AVMException &e) {
+            if (is_stdin)
+                throw;
+            errors.push_back(e.what());
+        }
         line_number++;
+    }
+
+    if (!errors.empty()) {
+        for (auto &what : errors) {
+            std::cerr << what << std::endl;
+        }
+        throw AVMException(Parser, "One or more errors occurred");
     }
 }
 
