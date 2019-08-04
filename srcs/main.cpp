@@ -81,7 +81,7 @@ auto main(int argc, char const *argv[]) -> int {
         }
 
         avm.run();
-    } catch (AVMException &e) {
+    } catch (const AVMException &e) {
         std::cerr << e.what() << std::endl;
     }
 
