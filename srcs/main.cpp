@@ -7,14 +7,18 @@
 #include "OperandFactory.hpp"
 #include "AVMException.hpp"
 
-auto read_file(std::istream &stream, AVM &avm) {
+auto read_file(
+    AVM &avm,
+    std::istream &stream,
+    bool is_stdin = false
+) {
     size_t line_number = 1;
 
     while (stream.good()) {
         std::string line;
 
         std::getline(stream, line);
-        if (line == ";;")
+        if (is_stdin && line == ";;")
             break;
 
         avm.load_line(line, line_number);
@@ -22,14 +26,22 @@ auto read_file(std::istream &stream, AVM &avm) {
     }
 }
 
-void repl(AVM &avm) {
-    while (std::cin.good()) {
+void repl() {
+    AVM avm;
+
+    while (true) {
         std::string line;
 
         std::cout << "> ";
         std::getline(std::cin, line);
-        avm.load_line(line, 1);
-        avm.step();
+        if (!std::cin.good())
+            break;
+        try {
+            avm.load_line(line, 1);
+            avm.step();
+        } catch (const AVMException &e) {
+            std::cerr << e.what() << std::endl;
+        }
     }
 }
 
@@ -39,16 +51,21 @@ auto main(int argc, char const *argv[]) -> int {
         return 1;
     }
 
+    if (argc == 2 && std::strcmp(argv[1], "-i") == 0) {
+        repl();
+        return 0;
+    }
+
     try {
         AVM avm;
 
         if (argc == 1) {
-            repl(avm);
-            return 0;
+            read_file(avm, std::cin, true);
+        } else {
+            std::ifstream fstream(argv[1]);
+            read_file(avm, fstream);
         }
 
-        std::ifstream fstream(argv[1]);
-        read_file(fstream, avm);
         avm.run();
     } catch (AVMException &e) {
         std::cerr << e.what() << std::endl;
