@@ -22,6 +22,17 @@ auto read_file(std::istream &stream, AVM &avm) {
     }
 }
 
+void repl(AVM &avm) {
+    while (std::cin.good()) {
+        std::string line;
+
+        std::cout << "> ";
+        std::getline(std::cin, line);
+        avm.load_line(line, 1);
+        avm.step();
+    }
+}
+
 auto main(int argc, char const *argv[]) -> int {
     if (argc > 2) {
         std::cerr << "Too many arguments provided." << std::endl;
@@ -32,12 +43,12 @@ auto main(int argc, char const *argv[]) -> int {
         AVM avm;
 
         if (argc == 1) {
-            read_file(std::cin, avm);
-        } else {
-            std::ifstream fstream(argv[1]);
-            read_file(fstream, avm);
+            repl(avm);
+            return 0;
         }
 
+        std::ifstream fstream(argv[1]);
+        read_file(fstream, avm);
         avm.run();
     } catch (AVMException &e) {
         std::cerr << e.what() << std::endl;
