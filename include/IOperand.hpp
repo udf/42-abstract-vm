@@ -81,7 +81,7 @@ class IOperand {
     }
 
 
-    using operand_variant = operand_variant_impl<eOperandTypes>;
+    using operand_variant = operand_variant_impl<eOperandTypes>::type;
 
     virtual std::string toPrettyString() const = 0;
 
