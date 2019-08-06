@@ -62,7 +62,10 @@ struct operand_variant_impl<std::integer_sequence<eOperandType, Es...>> {
     using type = std::variant<typename tOperandType<Es>::type...>;
 };
 
-class IOperand {
+
+class IOperand;
+
+class IOperandBase {
   public:
     virtual int getPrecision(void) const = 0;
     virtual eOperandType getType(void) const = 0;
@@ -77,10 +80,12 @@ class IOperand {
 
     virtual std::string const &toString(void) const = 0;
 
-    virtual ~IOperand(void) {
+    virtual ~IOperandBase(void) {
     }
+};
 
-
+class IOperand : public IOperandBase {
+  public:
     using operand_variant = operand_variant_impl<eOperandTypes>::type;
 
     virtual std::string toPrettyString() const = 0;
@@ -91,4 +96,7 @@ class IOperand {
     virtual operand_variant convertVariant(operand_variant value) const = 0;
     virtual IOperand const *createFromVariant(operand_variant value) const = 0;
     virtual IOperand const *clone() const = 0;
+
+    virtual ~IOperand(void) {
+    }
 };
