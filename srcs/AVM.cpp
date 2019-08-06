@@ -130,6 +130,20 @@ auto AVM::print() -> void {
     std::cout << static_cast<char>(value);
 }
 
+auto AVM::ror() -> void {
+    if (this->stack.size() <= 1)
+        return;
+    this->stack.push_back(std::move(this->stack.front()));
+    this->stack.pop_front();
+}
+
+auto AVM::rol() -> void {
+    if (this->stack.size() <= 1)
+        return;
+    this->stack.push_front(std::move(this->stack.back()));
+    this->stack.pop_back();
+}
+
 auto AVM::exit() -> void {
     this->running = false;
 }

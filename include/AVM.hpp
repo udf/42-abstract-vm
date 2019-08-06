@@ -5,6 +5,7 @@
 #include <regex>
 #include <unordered_map>
 #include <vector>
+#include <list>
 
 #include "util.hpp"
 #include "AVMException.hpp"
@@ -34,6 +35,8 @@ class AVM {
     auto div() -> void;
     auto mod() -> void;
     auto print() -> void;
+    auto ror() -> void;
+    auto rol() -> void;
     auto exit() -> void;
 
 
@@ -101,7 +104,7 @@ class AVM {
     size_t instruction_ptr = 0;
 
     IOperand const *instr_arg = nullptr;
-    std::vector<operand_uptr> stack;
+    std::list<operand_uptr> stack;
     bool running = true;
 
   public:
