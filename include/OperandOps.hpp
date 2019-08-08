@@ -30,7 +30,6 @@ struct modulus<void> {
         return x % y;
     }
 
-    // TODO: test float division with -0
     auto operator()(const float &x, const float &y) const -> float {
         if (std::equal_to()(y, 0))
             throw AVMException("Modulus by zero");
