@@ -95,6 +95,7 @@ auto AVM::dump() -> void {
 }
 
 auto AVM::assert() -> void {
+    _assert(!this->stack.empty(), "assert on empty stack");
     if (*instr_arg == *stack.back())
         return;
     std::string info = "Assertion error, expected \"";
