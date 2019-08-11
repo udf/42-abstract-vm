@@ -101,7 +101,7 @@ auto AVM::assert() -> void {
     std::string info = "Assertion error, expected \"";
     info += instr_arg->toPrettyString() + "\" found";
     throw AVMException(Runtime, info)
-        .set_hint(stack.back().get()->toPrettyString());
+        .set_hint(stack.back()->toPrettyString());
 }
 
 auto AVM::add() -> void {
