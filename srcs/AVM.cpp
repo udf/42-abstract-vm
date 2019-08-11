@@ -1,5 +1,7 @@
 #include "AVM.hpp"
 
+namespace AVM {
+
 AVM::AVM() {
 }
 
@@ -159,3 +161,5 @@ auto AVM::load() -> void {
 auto AVM::exit() -> void {
     this->running = false;
 }
+
+} // namespace AVM

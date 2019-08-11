@@ -1,17 +1,19 @@
 #include "AVM.hpp"
 #include <set>
 
+namespace AVM {
+
 const AVM::InstrBuilders::BuilderData AVM::InstrBuilders::single = {
     &InstrBuilders::parse_single,
-    {IDENTIFIER, END}
+    {Lexer::IDENTIFIER, Lexer::END}
 };
 
 const AVM::InstrBuilders::BuilderData AVM::InstrBuilders::val_arg = {
     &InstrBuilders::parse_val_arg,
-    {IDENTIFIER, IDENTIFIER, L_BRACKET, NUMBER, R_BRACKET, END}
+    {Lexer::IDENTIFIER, Lexer::IDENTIFIER, Lexer::L_BRACKET, Lexer::NUMBER, Lexer::R_BRACKET, Lexer::END}
 };
 
-auto AVM::InstrBuilders::get_func(instr_mapping &m, const tToken &token)
+auto AVM::InstrBuilders::get_func(instr_mapping &m, const Lexer::tToken &token)
     -> instr_fptr
 {
     auto it = m.find(token.value);
@@ -22,7 +24,7 @@ auto AVM::InstrBuilders::get_func(instr_mapping &m, const tToken &token)
     return (*it).second;
 }
 
-auto AVM::InstrBuilders::parse_single(const std::vector<tToken> &tokens)
+auto AVM::InstrBuilders::parse_single(const std::vector<Lexer::tToken> &tokens)
     -> ParsedInstruction
 {
     static instr_mapping mapping{
@@ -47,7 +49,7 @@ auto AVM::InstrBuilders::parse_single(const std::vector<tToken> &tokens)
     return p;
 }
 
-auto AVM::InstrBuilders::parse_val_arg(const std::vector<tToken> &tokens)
+auto AVM::InstrBuilders::parse_val_arg(const std::vector<Lexer::tToken> &tokens)
     -> ParsedInstruction
 {
     static instr_mapping mapping{
@@ -79,8 +81,8 @@ auto AVM::parse_line(std::string &line) -> std::optional<ParsedInstruction> {
         &InstrBuilders::val_arg
     };
 
-    auto tokens = AVM::lex_line(line);
-    if (tokens.size() == 1 && tokens[0].type == END)
+    auto tokens = Lexer::lex_line(line);
+    if (tokens.size() == 1 && tokens[0].type == Lexer::END)
         return std::nullopt;
 
     std::vector<std::pair<bool, size_t>> matches;
@@ -89,7 +91,7 @@ auto AVM::parse_line(std::string &line) -> std::optional<ParsedInstruction> {
         size_t i = first_diff(
             builder->pattern,
             tokens,
-            [](const eTokens &expected_type, const tToken &token) {
+            [](const Lexer::eTokens &expected_type, const Lexer::tToken &token) {
                 return token.type == expected_type;
             }
         );
@@ -125,7 +127,7 @@ auto AVM::parse_line(std::string &line) -> std::optional<ParsedInstruction> {
         if (match_pos != longest_match)
             continue;
         expected_tokens.insert(
-            sTokenNames[builders[i]->pattern[longest_match]]
+            Lexer::sTokenNames[builders[i]->pattern[longest_match]]
         );
     }
 
@@ -137,8 +139,10 @@ auto AVM::parse_line(std::string &line) -> std::optional<ParsedInstruction> {
     info.pop_back();
     info += " after";
 
-    const tToken &last_token = tokens[longest_match - 1];
+    const Lexer::tToken &last_token = tokens[longest_match - 1];
     throw AVMException(Parser, info)
         .set_hint(last_token.value)
         .set_column(last_token.col_pos + last_token.value.size());
 }
+
+} // namespace AVM

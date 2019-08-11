@@ -1,6 +1,8 @@
-#include "AVM.hpp"
+#include "AVMLexer.hpp"
 
-const char *AVM::sTokenNames[eTokens::_LENGTH] = {
+namespace AVM::Lexer {
+
+const char *sTokenNames[eTokens::_LENGTH] = {
     "WHITESPACE",
     "IDENTIFIER",
     "NUMBER",
@@ -10,7 +12,7 @@ const char *AVM::sTokenNames[eTokens::_LENGTH] = {
     "END"
 };
 
-const std::array<std::regex, AVM::eTokens::_LENGTH> AVM::rTokens = {
+const std::array<std::regex, eTokens::_LENGTH> rTokens = {
     std::regex(R"(^\s+)"),
     std::regex(R"(^[a-zA-Z]\w*)"),
     std::regex(R"(^-?\d+\.?)"),
@@ -20,7 +22,7 @@ const std::array<std::regex, AVM::eTokens::_LENGTH> AVM::rTokens = {
     std::regex(R"(^$)"),
 };
 
-auto AVM::lex_line(std::string line) -> const std::vector<tToken> {
+auto lex_line(std::string line) -> const std::vector<tToken> {
     std::vector<tToken> tokens;
     size_t col_pos = 1;
 
@@ -50,13 +52,13 @@ auto AVM::lex_line(std::string line) -> const std::vector<tToken> {
         }
 
         if (matched_tokens.size() == 0) {
-            throw AVMException(Lexer, "Unknown token").set_column(col_pos);
+            throw AVMException(eAVMException::Lexer, "Unknown token").set_column(col_pos);
         }
         if (matched_tokens.size() > 1) {
             for (auto &&t : matched_tokens) {
                 std::cout << sTokenNames[t.type] << std::endl;
             }
-            throw AVMException(Lexer, "Ambiguous token").set_column(col_pos);
+            throw AVMException(eAVMException::Lexer, "Ambiguous token").set_column(col_pos);
         }
 
         tToken &token = matched_tokens[0];
@@ -79,3 +81,5 @@ auto AVM::lex_line(std::string line) -> const std::vector<tToken> {
     tokens.push_back(token);
     return tokens;
 }
+
+} // namespace AVM::Lexer

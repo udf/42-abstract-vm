@@ -8,9 +8,12 @@
 #include <list>
 
 #include "util.hpp"
-#include "AVMException.hpp"
 #include "IOperand.hpp"
 #include "OperandFactory.hpp"
+#include "AVMLexer.hpp"
+#include "AVMException.hpp"
+
+namespace AVM {
 
 class AVM {
   private:
@@ -40,32 +43,6 @@ class AVM {
     auto load() -> void;
     auto exit() -> void;
 
-
-    // Lexer
-    enum eTokens {
-        WHITESPACE,
-        IDENTIFIER,
-        NUMBER,
-        L_BRACKET,
-        R_BRACKET,
-        COMMENT_START,
-        END,
-        _LENGTH
-    };
-
-    static const char *sTokenNames[eTokens::_LENGTH];
-
-    static const std::array<std::regex, eTokens::_LENGTH> rTokens; 
-
-    struct tToken {
-        eTokens type;
-        size_t col_pos;
-        std::string value;
-    };
-
-    static auto lex_line(std::string line) -> const std::vector<tToken>;
-
-
     // Parser
     using instr_fptr = decltype(&AVM::exit);
     using instr_mapping = const std::unordered_map<std::string, instr_fptr>;
@@ -78,18 +55,18 @@ class AVM {
     };
 
     struct InstrBuilders {
-        static auto get_func(instr_mapping &m, const tToken &token)
+        static auto get_func(instr_mapping &m, const Lexer::tToken &token)
             -> instr_fptr;
 
-        static auto parse_single(const std::vector<tToken> &tokens)
+        static auto parse_single(const std::vector<Lexer::tToken> &tokens)
             -> ParsedInstruction;
-        static auto parse_val_arg(const std::vector<tToken> &tokens)
+        static auto parse_val_arg(const std::vector<Lexer::tToken> &tokens)
             -> ParsedInstruction;
 
         using fptr = decltype(&InstrBuilders::parse_single);
         struct BuilderData {
             fptr func;
-            std::vector<eTokens> pattern;
+            std::vector<Lexer::eTokens> pattern;
         };
 
         static const BuilderData single;
@@ -117,3 +94,5 @@ class AVM {
     auto step() -> void;
     auto run() -> void;
 };
+
+} // namespace AVM

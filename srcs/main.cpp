@@ -8,7 +8,7 @@
 #include "AVMException.hpp"
 
 auto read_file(
-    AVM &avm,
+    AVM::AVM &avm,
     std::istream &stream,
     bool is_stdin = false
 ) {
@@ -41,7 +41,7 @@ auto read_file(
 }
 
 void repl() {
-    AVM avm;
+    AVM::AVM avm;
 
     while (true) {
         std::string line;
@@ -71,7 +71,7 @@ auto main(int argc, char const *argv[]) -> int {
     }
 
     try {
-        AVM avm;
+        AVM::AVM avm;
 
         if (argc == 1) {
             read_file(avm, std::cin, true);
