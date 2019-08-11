@@ -145,6 +145,16 @@ auto AVM::rot() -> void {
     );
 }
 
+auto AVM::save() -> void {
+    _assert(this->stack.size() >= 1, "save on empty stack");
+    this->stored_val.reset(this->stack.back()->clone());
+}
+
+auto AVM::load() -> void {
+    _assert((bool)this->stored_val, "load when no value is saved");
+    this->stack.emplace_back(this->stored_val->clone());
+}
+
 auto AVM::exit() -> void {
     this->running = false;
 }

@@ -36,6 +36,8 @@ class AVM {
     auto mod() -> void;
     auto print() -> void;
     auto rot() -> void;
+    auto save() -> void;
+    auto load() -> void;
     auto exit() -> void;
 
 
@@ -101,6 +103,7 @@ class AVM {
     // Runtime
     std::vector<ParsedInstruction> instructions;
     size_t instruction_ptr = 0;
+    operand_uptr stored_val;
 
     IOperand const *instr_arg = nullptr;
     std::list<operand_uptr> stack;
