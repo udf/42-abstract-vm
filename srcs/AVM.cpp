@@ -57,14 +57,15 @@ auto AVM::do_binary_op(F f) -> void {
         "binary operation with less than two values on the stack"
     );
 
-    auto right = std::move(this->stack.back());
-    this->stack.pop_back();
-
-    auto left = std::move(this->stack.back());
-    this->stack.pop_back();
+    auto it = this->stack.rbegin();
+    auto &right = *it;
+    it++;
+    auto &left = *it;
 
     try {
         auto result = f(*left, *right);
+        this->stack.pop_back();
+        this->stack.pop_back();
         this->stack.emplace_back(result);
     } catch (AVMException &e) {
         e.set_type(Runtime);
@@ -132,11 +133,11 @@ auto AVM::print() -> void {
 
 auto AVM::rot() -> void {
     _assert(this->stack.size() >= 1, "rotate on empty stack");
-    auto item = std::move(this->stack.back());
-    this->stack.pop_back();
-    _assert(item->getType() == Int32, "rotate on non int32 variable");
+    auto &item = *this->stack.back();
+    _assert(item.getType() == Int32, "rotate on non int32 variable");
 
-    auto count = std::get<tOperandType<Int32>::type>(item->getValue());
+    auto count = std::get<tOperandType<Int32>::type>(item.getValue());
+    this->stack.pop_back();
     list_rotate(
         this->stack,
         static_cast<size_t>(std::abs(count)),
