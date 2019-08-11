@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <memory>
-#include <regex>
 #include <unordered_map>
 #include <vector>
 #include <list>
