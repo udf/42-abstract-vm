@@ -13,15 +13,10 @@
 namespace AVM {
 
 class AVM {
-  private:
-    AVM(const AVM &other) = delete;
-    auto operator=(const AVM &other) -> AVM & = delete;
-
-    template<typename F>
-    auto do_binary_op(F f = F()) -> void;
-    auto _assert(bool condition, std::string info) -> void;
-
   public:
+    AVM();
+    ~AVM();
+
     auto push() -> void;
     auto pop() -> void;
     auto dump() -> void;
@@ -37,9 +32,6 @@ class AVM {
     auto load() -> void;
     auto exit() -> void;
 
-    AVM();
-    ~AVM();
-
     auto load_line(std::string &line, size_t line_number = 0) -> void;
     auto step() -> void;
     auto run() -> void;
@@ -53,6 +45,13 @@ class AVM {
     };
 
   private:
+    AVM(const AVM &other) = delete;
+    auto operator=(const AVM &other) -> AVM & = delete;
+
+    template<typename F>
+    auto do_binary_op(F f = F()) -> void;
+    auto _assert(bool condition, std::string info) -> void;
+
     std::vector<Instruction> instructions;
     size_t instruction_ptr = 0;
     operand_uptr stored_val;
