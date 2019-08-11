@@ -87,13 +87,13 @@ class AVM {
             -> ParsedInstruction;
 
         using fptr = decltype(&InstrBuilders::parse_single);
-        struct FuncData {
+        struct BuilderData {
             fptr func;
             std::vector<eTokens> pattern;
         };
 
-        static const FuncData single;
-        static const FuncData val_arg;
+        static const BuilderData single;
+        static const BuilderData val_arg;
     };
 
     static auto parse_line(std::string &line)

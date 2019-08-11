@@ -1,12 +1,12 @@
 #include "AVM.hpp"
 #include <set>
 
-const AVM::InstrBuilders::FuncData AVM::InstrBuilders::single = {
+const AVM::InstrBuilders::BuilderData AVM::InstrBuilders::single = {
     &InstrBuilders::parse_single,
     {IDENTIFIER, END}
 };
 
-const AVM::InstrBuilders::FuncData AVM::InstrBuilders::val_arg = {
+const AVM::InstrBuilders::BuilderData AVM::InstrBuilders::val_arg = {
     &InstrBuilders::parse_val_arg,
     {IDENTIFIER, IDENTIFIER, L_BRACKET, NUMBER, R_BRACKET, END}
 };
@@ -74,7 +74,7 @@ auto AVM::InstrBuilders::parse_val_arg(const std::vector<tToken> &tokens)
 }
 
 auto AVM::parse_line(std::string &line) -> std::optional<ParsedInstruction> {
-    static const std::vector<const InstrBuilders::FuncData *> builders = {
+    static const std::vector<const InstrBuilders::BuilderData *> builders = {
         &InstrBuilders::single,
         &InstrBuilders::val_arg
     };
