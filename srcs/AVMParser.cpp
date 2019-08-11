@@ -1,31 +1,32 @@
-#include "AVM.hpp"
 #include <set>
 
-namespace AVM {
+#include "AVMParser.hpp"
 
-const AVM::InstrBuilders::BuilderData AVM::InstrBuilders::single = {
+namespace AVM::Parser {
+
+const InstrBuilders::BuilderDef InstrBuilders::single = {
     &InstrBuilders::parse_single,
     {Lexer::IDENTIFIER, Lexer::END}
 };
 
-const AVM::InstrBuilders::BuilderData AVM::InstrBuilders::val_arg = {
+const InstrBuilders::BuilderDef InstrBuilders::val_arg = {
     &InstrBuilders::parse_val_arg,
     {Lexer::IDENTIFIER, Lexer::IDENTIFIER, Lexer::L_BRACKET, Lexer::NUMBER, Lexer::R_BRACKET, Lexer::END}
 };
 
-auto AVM::InstrBuilders::get_func(instr_mapping &m, const Lexer::tToken &token)
-    -> instr_fptr
+auto InstrBuilders::get_func(instr_mapping &m, const Lexer::tToken &token)
+    -> AVM::instr_fptr
 {
     auto it = m.find(token.value);
     if (it == m.end())
-        throw AVMException(Parser, "Unknown instruction:")
+        throw Exception(Parse, "Unknown instruction:")
             .set_hint(token.value)
             .set_column(token.col_pos);
     return (*it).second;
 }
 
-auto AVM::InstrBuilders::parse_single(const std::vector<Lexer::tToken> &tokens)
-    -> ParsedInstruction
+auto InstrBuilders::parse_single(const std::vector<Lexer::tToken> &tokens)
+    -> AVM::Instruction
 {
     static instr_mapping mapping{
         {"pop", &AVM::pop},
@@ -42,15 +43,15 @@ auto AVM::InstrBuilders::parse_single(const std::vector<Lexer::tToken> &tokens)
         {"exit", &AVM::exit},
     };
 
-    ParsedInstruction p{};
+    AVM::Instruction p{};
 
     p.func = get_func(mapping, tokens[0]);
 
     return p;
 }
 
-auto AVM::InstrBuilders::parse_val_arg(const std::vector<Lexer::tToken> &tokens)
-    -> ParsedInstruction
+auto InstrBuilders::parse_val_arg(const std::vector<Lexer::tToken> &tokens)
+    -> AVM::Instruction
 {
     static instr_mapping mapping{
         {"push", &AVM::push},
@@ -58,25 +59,25 @@ auto AVM::InstrBuilders::parse_val_arg(const std::vector<Lexer::tToken> &tokens)
     };
     static auto factory = OperandFactory();
 
-    ParsedInstruction p{};
+    AVM::Instruction p{};
 
     p.func = get_func(mapping, tokens[0]);
 
     try {
-        p.arg = operand_uptr(factory.createOperand(
+        p.arg = AVM::operand_uptr(factory.createOperand(
             tokens[1].value.c_str(),
             tokens[3].value
         ));
-    } catch (AVMException &e) {
-        e.set_type(Parser);
+    } catch (Exception &e) {
+        e.set_type(Parse);
         throw;
     }
 
     return p;
 }
 
-auto AVM::parse_line(std::string &line) -> std::optional<ParsedInstruction> {
-    static const std::vector<const InstrBuilders::BuilderData *> builders = {
+auto parse_line(std::string &line) -> std::optional<AVM::Instruction> {
+    static const std::vector<const InstrBuilders::BuilderDef *> builders = {
         &InstrBuilders::single,
         &InstrBuilders::val_arg
     };
@@ -102,7 +103,7 @@ auto AVM::parse_line(std::string &line) -> std::optional<ParsedInstruction> {
     }
 
     if (match_count > 1) {
-        throw AVMException(
+        throw Exception(
             Internal,
             "fix me: more than one builder pattern matched"
         );
@@ -140,9 +141,9 @@ auto AVM::parse_line(std::string &line) -> std::optional<ParsedInstruction> {
     info += " after";
 
     const Lexer::tToken &last_token = tokens[longest_match - 1];
-    throw AVMException(Parser, info)
+    throw Exception(Parse, info)
         .set_hint(last_token.value)
         .set_column(last_token.col_pos + last_token.value.size());
 }
 
-} // namespace AVM
+} // namespace AVM::Parser

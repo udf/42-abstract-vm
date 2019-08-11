@@ -13,7 +13,7 @@ struct divides<void> {
     template<class T>
     auto operator()(const T &x, const T &y) const -> T {
         if (std::equal_to()(y, static_cast<T>(0)))
-            throw AVMException("Divide by zero");
+            throw AVM::Exception("Divide by zero");
         return x / y;
     }
 };
@@ -26,19 +26,19 @@ struct modulus<void> {
     template<class T>
     auto operator()(const T &x, const T &y) const -> T {
         if (std::equal_to()(y, static_cast<T>(0)))
-            throw AVMException("Modulus by zero");
+            throw AVM::Exception("Modulus by zero");
         return x % y;
     }
 
     auto operator()(const float &x, const float &y) const -> float {
         if (std::equal_to()(y, 0))
-            throw AVMException("Modulus by zero");
+            throw AVM::Exception("Modulus by zero");
         return fmodf(x, y);
     }
 
     auto operator()(const double &x, const double &y) const -> double {
         if (std::equal_to()(y, 0))
-            throw AVMException("Modulus by zero");
+            throw AVM::Exception("Modulus by zero");
         return fmod(x, y);
     }
 };

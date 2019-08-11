@@ -27,10 +27,10 @@ SRC_DIR=./srcs/
 BUILD_DIR=./build/
 
 # Files that have a matching .cpp and .hpp
-FILESTEMS=AVMException OperandFactory AVM AVMLexer
+FILESTEMS=OperandFactory AVM AVMException AVMLexer AVMParser
 
 # Plain source files
-SRC_FILES=$(FILESTEMS) main AVMParser
+SRC_FILES=$(FILESTEMS) main
 
 # Plain headers
 INCLUDE_FILES=$(FILESTEMS) util IOperand OperandFactory Operand OperandOps

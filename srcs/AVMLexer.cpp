@@ -35,7 +35,7 @@ auto lex_line(std::string line) -> const std::vector<tToken> {
                 continue;
 
             if (matches.position() != 0) {
-                throw AVMException(
+                throw Exception(
                     "Regex match does not start at the beginning of input"
                 ).set_column(col_pos + 1);
             }
@@ -52,13 +52,13 @@ auto lex_line(std::string line) -> const std::vector<tToken> {
         }
 
         if (matched_tokens.size() == 0) {
-            throw AVMException(eAVMException::Lexer, "Unknown token").set_column(col_pos);
+            throw Exception(Lex, "Unknown token").set_column(col_pos);
         }
         if (matched_tokens.size() > 1) {
             for (auto &&t : matched_tokens) {
                 std::cout << sTokenNames[t.type] << std::endl;
             }
-            throw AVMException(eAVMException::Lexer, "Ambiguous token").set_column(col_pos);
+            throw Exception(Lex, "Ambiguous token").set_column(col_pos);
         }
 
         tToken &token = matched_tokens[0];

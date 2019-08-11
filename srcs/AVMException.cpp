@@ -1,7 +1,9 @@
 #include "AVMException.hpp"
 
-AVMException::AVMException(
-    eAVMException type,
+namespace AVM {
+
+Exception::Exception(
+    eException type,
     const std::string info
 ) {
     this->type = type;
@@ -9,13 +11,13 @@ AVMException::AVMException(
     this->build_pretty_info();
 }
 
-AVMException::AVMException(
+Exception::Exception(
     const std::string info
-) : AVMException(Internal, info)
+) : Exception(Internal, info)
 {
 }
 
-AVMException::AVMException(const AVMException &other) {
+Exception::Exception(const Exception &other) {
     this->pretty_info = other.pretty_info;
     this->type = other.type;
     this->info = other.info;
@@ -24,44 +26,44 @@ AVMException::AVMException(const AVMException &other) {
     this->hint = other.hint;
 }
 
-AVMException::~AVMException() {
+Exception::~Exception() {
 }
 
 template<typename T>
-auto AVMException::set_member(T AVMException::* member, T value)
-    -> AVMException &
+auto Exception::set_member(T Exception::* member, T value)
+    -> Exception &
 {
     this->*member = value;
     this->build_pretty_info();
     return *this;
 }
 
-auto AVMException::set_type(eAVMException type) -> AVMException &{
-    return set_member(&AVMException::type, type);
+auto Exception::set_type(eException type) -> Exception &{
+    return set_member(&Exception::type, type);
 }
 
-auto AVMException::set_info(std::string info) -> AVMException &{
-    return set_member(&AVMException::info, info);
+auto Exception::set_info(std::string info) -> Exception &{
+    return set_member(&Exception::info, info);
 }
 
-auto AVMException::set_line(size_t line) -> AVMException &{
-    return set_member(&AVMException::line, line);
+auto Exception::set_line(size_t line) -> Exception &{
+    return set_member(&Exception::line, line);
 }
 
-auto AVMException::set_column(size_t column) -> AVMException &{
-    return set_member(&AVMException::column, column);
+auto Exception::set_column(size_t column) -> Exception &{
+    return set_member(&Exception::column, column);
 }
 
-auto AVMException::set_hint(std::string hint) -> AVMException &{
-    return set_member(&AVMException::hint, hint);
+auto Exception::set_hint(std::string hint) -> Exception &{
+    return set_member(&Exception::hint, hint);
 }
 
-auto AVMException::what() const throw() -> const char *{
+auto Exception::what() const throw() -> const char *{
     return this->pretty_info.c_str();
 }
 
 // {type} error [on line {line}[, column {column}]]: info "{hint}"
-auto AVMException::build_pretty_info() -> void{
+auto Exception::build_pretty_info() -> void{
     this->pretty_info = std::string(this->TypeName[this->type]) + " error";
     if (this->line) {
         this->pretty_info += " on line " + std::to_string(this->line);
@@ -74,3 +76,5 @@ auto AVMException::build_pretty_info() -> void{
         this->pretty_info += " \"" + this->hint + '"';
     }
 }
+
+} // namespace AVM

@@ -24,7 +24,7 @@ auto read_file(
 
         try {
             avm.load_line(line, line_number);
-        } catch (const AVMException &e) {
+        } catch (const AVM::Exception &e) {
             if (is_stdin)
                 throw;
             errors.push_back(e.what());
@@ -36,7 +36,7 @@ auto read_file(
         for (auto &what : errors) {
             std::cerr << what << std::endl;
         }
-        throw AVMException(Parser, "One or more errors occurred");
+        throw AVM::Exception(AVM::Parse, "One or more errors occurred");
     }
 }
 
@@ -53,7 +53,7 @@ void repl() {
         try {
             avm.load_line(line, 1);
             avm.step();
-        } catch (const AVMException &e) {
+        } catch (const AVM::Exception &e) {
             std::cerr << e.what() << std::endl;
         }
     }
@@ -81,7 +81,7 @@ auto main(int argc, char const *argv[]) -> int {
         }
 
         avm.run();
-    } catch (const AVMException &e) {
+    } catch (const AVM::Exception &e) {
         std::cerr << e.what() << std::endl;
     }
 

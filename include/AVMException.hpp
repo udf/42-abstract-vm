@@ -2,49 +2,53 @@
 #include <exception>
 #include <string>
 
-enum eAVMException {
-    Lexer,
-    Parser,
+namespace AVM {
+
+enum eException {
+    Lex,
+    Parse,
     Runtime,
     Internal,
-    eAVMException_MAX
+    eException_MAX
 };
 
-class AVMException : public std::exception {
+class Exception : public std::exception {
   public:
-    constexpr static const char *const TypeName[eAVMException_MAX] = {
+    constexpr static const char *const TypeName[eException_MAX] = {
       "Lex",
       "Parse",
       "Runtime",
       "Internal"
     };
 
-    AVMException(eAVMException type, std::string info);
-    AVMException(std::string info);
-    AVMException(const AVMException &other);
-    ~AVMException();
+    Exception(eException type, std::string info);
+    Exception(std::string info);
+    Exception(const Exception &other);
+    ~Exception();
 
-    auto set_type(eAVMException type) -> AVMException &;
-    auto set_info(std::string info) -> AVMException &;
-    auto set_line(size_t line) -> AVMException &;
-    auto set_column(size_t column) -> AVMException &;
-    auto set_hint(std::string hint) -> AVMException &;
+    auto set_type(eException type) -> Exception &;
+    auto set_info(std::string info) -> Exception &;
+    auto set_line(size_t line) -> Exception &;
+    auto set_column(size_t column) -> Exception &;
+    auto set_hint(std::string hint) -> Exception &;
 
     auto what() const throw() -> const char *;
 
   private:
-    AVMException();
-    auto operator=(const AVMException &other) -> AVMException &;
+    Exception();
+    auto operator=(const Exception &other) -> Exception &;
 
     auto build_pretty_info() -> void;
     template<typename T>
-    auto set_member(T AVMException::* member, T value) -> AVMException &;
+    auto set_member(T Exception::* member, T value) -> Exception &;
 
     std::string pretty_info;
 
-    eAVMException type;
+    eException type;
     std::string info;
     size_t line = 0;
     size_t column = 0;
     std::string hint;
 };
+
+} // namespace AVM

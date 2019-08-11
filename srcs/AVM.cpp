@@ -1,4 +1,5 @@
 #include "AVM.hpp"
+#include "AVMParser.hpp"
 
 namespace AVM {
 
@@ -10,12 +11,12 @@ AVM::~AVM() {
 
 auto AVM::load_line(std::string &line, size_t line_number) -> void {
     try {
-        auto instruction = this->parse_line(line);
+        auto instruction = Parser::parse_line(line);
         if (!instruction)
             return;
         this->instructions.push_back(std::move(instruction.value()));
         this->instructions.back().line_number = line_number;
-    } catch (AVMException &e) {
+    } catch (Exception &e) {
         e.set_line(line_number);
         throw;
     }
@@ -23,7 +24,7 @@ auto AVM::load_line(std::string &line, size_t line_number) -> void {
 
 auto AVM::step() -> void {
     if (this->instruction_ptr >= this->instructions.size())
-        throw AVMException(
+        throw Exception(
             Runtime,
             "Unexpected end of instructions (missing exit?)"
         );
@@ -34,7 +35,7 @@ auto AVM::step() -> void {
     this->instr_arg = instruction.arg.get();
     try {
         (this->*instruction.func)();
-    } catch (AVMException &e) {
+    } catch (Exception &e) {
         e.set_line(instruction.line_number);
         throw;
     }
@@ -48,7 +49,7 @@ auto AVM::run() -> void{
 
 auto AVM::_assert(bool condition, std::string info) -> void {
     if (!condition) {
-        throw AVMException(Runtime, info);
+        throw Exception(Runtime, info);
     }
 }
 
@@ -69,7 +70,7 @@ auto AVM::do_binary_op(F f) -> void {
         this->stack.pop_back();
         this->stack.pop_back();
         this->stack.emplace_back(result);
-    } catch (AVMException &e) {
+    } catch (Exception &e) {
         e.set_type(Runtime);
         throw;
     }
@@ -102,7 +103,7 @@ auto AVM::assert() -> void {
         return;
     std::string info = "Assertion error, expected \"";
     info += instr_arg->toPrettyString() + "\" found";
-    throw AVMException(Runtime, info)
+    throw Exception(Runtime, info)
         .set_hint(stack.back()->toPrettyString());
 }
 
