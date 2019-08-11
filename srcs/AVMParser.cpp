@@ -34,8 +34,7 @@ auto AVM::InstrBuilders::parse_single(const std::vector<tToken> &tokens)
         {"div", &AVM::div},
         {"mod", &AVM::mod},
         {"print", &AVM::print},
-        {"rol", &AVM::rol},
-        {"ror", &AVM::ror},
+        {"rot", &AVM::rot},
         {"exit", &AVM::exit},
     };
 

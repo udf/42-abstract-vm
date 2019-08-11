@@ -130,18 +130,18 @@ auto AVM::print() -> void {
     std::cout << static_cast<char>(value);
 }
 
-auto AVM::ror() -> void {
-    if (this->stack.size() <= 1)
-        return;
-    this->stack.push_back(std::move(this->stack.front()));
-    this->stack.pop_front();
-}
-
-auto AVM::rol() -> void {
-    if (this->stack.size() <= 1)
-        return;
-    this->stack.push_front(std::move(this->stack.back()));
+auto AVM::rot() -> void {
+    _assert(this->stack.size() >= 1, "rotate on empty stack");
+    auto item = std::move(this->stack.back());
     this->stack.pop_back();
+    _assert(item->getType() == Int32, "rotate on non int32 variable");
+
+    auto count = std::get<tOperandType<Int32>::type>(item->getValue());
+    list_rotate(
+        this->stack,
+        static_cast<size_t>(std::abs(count)),
+        count < 0
+    );
 }
 
 auto AVM::exit() -> void {

@@ -35,8 +35,7 @@ class AVM {
     auto div() -> void;
     auto mod() -> void;
     auto print() -> void;
-    auto ror() -> void;
-    auto rol() -> void;
+    auto rot() -> void;
     auto exit() -> void;
 
 
