@@ -25,6 +25,8 @@ const AVM::instr_mapping AVM::instr_map{
     {"jgt", &AVM::jgt},
     {"jlte", &AVM::jlte},
     {"jgte", &AVM::jgte},
+    {"call", &AVM::call},
+    {"ret", &AVM::ret},
 };
 
 AVM::AVM() {
@@ -247,5 +249,16 @@ auto AVM::jgte() -> void {
     this->do_jump_op<std::greater_equal<>>();
 }
 
+
+auto AVM::call() -> void {
+    this->call_stack.push_back(this->instruction_ptr);
+    this->jmp();
+}
+
+auto AVM::ret() -> void {
+    _assert(this->call_stack.size() >= 1, "Return on empty call stack");
+    this->instruction_ptr = this->call_stack.back();
+    this->call_stack.pop_back();
+}
 
 } // namespace AVM

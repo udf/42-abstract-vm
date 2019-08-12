@@ -73,6 +73,8 @@ class AVM {
     auto jlte() -> void;
     auto jgte() -> void;
 
+    auto call() -> void;
+    auto ret() -> void;
 
     std::vector<Instruction> instructions;
     std::unordered_map<std::string, size_t> labels;
@@ -81,6 +83,7 @@ class AVM {
 
     const Instruction *cur_instr;
     std::list<operand_uptr> stack;
+    std::vector<size_t> call_stack;
     bool running = true;
 };
 

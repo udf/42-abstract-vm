@@ -57,7 +57,7 @@ auto InstrBuilders::parse_single(const std::vector<Lexer::tToken> &tokens)
 {
     static const AVM::instr_mapping mapping = get_mapping({
         "pop", "dump", "add", "sub", "mul", "div", "mod", "print", "exit",
-        "rot", "save", "load"
+        "rot", "save", "load", "ret"
     });
 
     AVM::Instruction p{};
@@ -104,7 +104,7 @@ auto InstrBuilders::parse_id_arg(const std::vector<Lexer::tToken> &tokens)
     -> parse_result
 {
     static AVM::instr_mapping mapping = get_mapping({
-        "jmp", "je", "jne", "jlt", "jgt", "jlte", "jgte"
+        "jmp", "je", "jne", "jlt", "jgt", "jlte", "jgte", "call"
     });
 
     AVM::Instruction p{};
