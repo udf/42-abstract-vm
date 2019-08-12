@@ -3,6 +3,23 @@
 
 namespace AVM {
 
+const AVM::instr_mapping AVM::instr_map{
+    {"push", &AVM::push},
+    {"pop", &AVM::pop},
+    {"dump", &AVM::dump},
+    {"assert", &AVM::assert},
+    {"add", &AVM::add},
+    {"sub", &AVM::sub},
+    {"mul", &AVM::mul},
+    {"div", &AVM::div},
+    {"mod", &AVM::mod},
+    {"print", &AVM::print},
+    {"rot", &AVM::rot},
+    {"save", &AVM::save},
+    {"load", &AVM::load},
+    {"exit", &AVM::exit},
+};
+
 AVM::AVM() {
 }
 

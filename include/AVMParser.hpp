@@ -7,10 +7,8 @@
 
 namespace AVM::Parser {
 
-using instr_mapping = const std::unordered_map<std::string, AVM::instr_fptr>;
-
 struct InstrBuilders {
-    static auto get_func(instr_mapping &m, const Lexer::tToken &token)
+    static auto get_func(const AVM::instr_mapping &m, const Lexer::tToken &token)
         -> AVM::instr_fptr;
 
     static auto parse_single(const std::vector<Lexer::tToken> &tokens)

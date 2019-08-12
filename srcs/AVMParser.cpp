@@ -14,7 +14,7 @@ const InstrBuilders::BuilderDef InstrBuilders::val_arg = {
     {Lexer::IDENTIFIER, Lexer::IDENTIFIER, Lexer::L_BRACKET, Lexer::NUMBER, Lexer::R_BRACKET, Lexer::END}
 };
 
-auto InstrBuilders::get_func(instr_mapping &m, const Lexer::tToken &token)
+auto InstrBuilders::get_func(const AVM::instr_mapping &m, const Lexer::tToken &token)
     -> AVM::instr_fptr
 {
     auto it = m.find(token.value);
@@ -25,23 +25,21 @@ auto InstrBuilders::get_func(instr_mapping &m, const Lexer::tToken &token)
     return (*it).second;
 }
 
+static AVM::instr_mapping get_mapping(const std::initializer_list<std::string> names) {
+    AVM::instr_mapping mapping;
+    for (auto &&name : names) {
+        mapping.emplace(name, AVM::instr_map.at(name));
+    }
+    return mapping;
+}
+
 auto InstrBuilders::parse_single(const std::vector<Lexer::tToken> &tokens)
     -> AVM::Instruction
 {
-    static instr_mapping mapping{
-        {"pop", &AVM::pop},
-        {"dump", &AVM::dump},
-        {"add", &AVM::add},
-        {"sub", &AVM::sub},
-        {"mul", &AVM::mul},
-        {"div", &AVM::div},
-        {"mod", &AVM::mod},
-        {"print", &AVM::print},
-        {"rot", &AVM::rot},
-        {"save", &AVM::save},
-        {"load", &AVM::load},
-        {"exit", &AVM::exit},
-    };
+    static const AVM::instr_mapping mapping = get_mapping({
+        "pop", "dump", "add", "sub", "mul", "div", "mod", "print", "rot",
+        "save", "load", "exit"
+    });
 
     AVM::Instruction p{};
 
@@ -53,10 +51,9 @@ auto InstrBuilders::parse_single(const std::vector<Lexer::tToken> &tokens)
 auto InstrBuilders::parse_val_arg(const std::vector<Lexer::tToken> &tokens)
     -> AVM::Instruction
 {
-    static instr_mapping mapping{
-        {"push", &AVM::push},
-        {"assert", &AVM::assert},
-    };
+    static AVM::instr_mapping mapping = get_mapping({
+        "push", "assert"
+    });
     static auto factory = OperandFactory();
 
     AVM::Instruction p{};
