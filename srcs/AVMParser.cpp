@@ -28,7 +28,12 @@ auto InstrBuilders::get_func(const AVM::instr_mapping &m, const Lexer::tToken &t
 static AVM::instr_mapping get_mapping(const std::initializer_list<std::string> names) {
     AVM::instr_mapping mapping;
     for (auto &&name : names) {
-        mapping.emplace(name, AVM::instr_map.at(name));
+        try {
+            mapping.emplace(name, AVM::instr_map.at(name));
+        } catch (std::out_of_range) {
+            throw Exception(Internal, "Unknown instruction in mapping definition")
+                .set_hint(name);
+        }
     }
     return mapping;
 }
