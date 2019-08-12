@@ -58,12 +58,9 @@ auto AVM::load_line(std::string &line, size_t line_number) -> void {
     }
 }
 
-auto AVM::step() -> void {
+auto AVM::step() -> bool {
     if (this->instruction_ptr >= this->instructions.size())
-        throw Exception(
-            Runtime,
-            "Unexpected end of instructions (missing exit?)"
-        );
+        return false;
 
     auto &instruction = this->instructions.at(this->instruction_ptr);
 
@@ -75,13 +72,23 @@ auto AVM::step() -> void {
         e.set_line(instruction.line_number);
         throw;
     }
+    return true;
 }
 
-auto AVM::run() -> void{
-    while (this->running) {
-        this->step();
+auto AVM::run(bool require_exit) -> void {
+    while (this->running && this->step()) {
     }
+    if (require_exit && this->running)
+        throw Exception(
+            Runtime,
+            "Unexpected end of instructions (missing exit?)"
+        );
 }
+
+auto AVM::is_running() -> bool {
+    return this->running;
+}
+
 
 
 auto AVM::_assert(bool condition, std::string info) -> void {

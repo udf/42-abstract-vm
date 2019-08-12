@@ -52,7 +52,9 @@ void repl() {
             break;
         try {
             avm.load_line(line, 1);
-            avm.step();
+            avm.run(false);
+            if (!avm.is_running())
+                break;
         } catch (const AVM::Exception &e) {
             std::cerr << e.what() << std::endl;
         }
@@ -80,7 +82,7 @@ auto main(int argc, char const *argv[]) -> int {
             read_file(avm, fstream);
         }
 
-        avm.run();
+        avm.run(true);
     } catch (const AVM::Exception &e) {
         std::cerr << e.what() << std::endl;
     }

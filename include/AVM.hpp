@@ -21,8 +21,8 @@ class AVM {
     auto dummy_instruction() -> void;
 
     auto load_line(std::string &line, size_t line_number = 0) -> void;
-    auto step() -> void;
-    auto run() -> void;
+    auto run(bool require_exit) -> void;
+    auto is_running() -> bool;
 
     using operand_uptr = std::unique_ptr<IOperand const>;
     using instr_fptr = decltype(&AVM::dummy_instruction);
@@ -40,6 +40,7 @@ class AVM {
     auto operator=(const AVM &other) -> AVM & = delete;
 
 
+    auto step() -> bool;
     template<typename T, typename F>
     auto do_binary_op(F f = F()) -> T;
     template<typename F>
