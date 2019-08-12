@@ -9,6 +9,7 @@ const char *sTokenNames[eTokens::_LENGTH] = {
     "L_BRACKET",
     "R_BRACKET",
     "COMMENT_START",
+    "COLON",
     "END"
 };
 
@@ -19,6 +20,7 @@ const std::array<std::regex, eTokens::_LENGTH> rTokens = {
     std::regex(R"(^\()"),
     std::regex(R"(^\))"),
     std::regex(R"(^;)"),
+    std::regex(R"(^:)"),
     std::regex(R"(^$)"),
 };
 

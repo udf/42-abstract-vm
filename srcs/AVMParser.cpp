@@ -11,7 +11,21 @@ const InstrBuilders::BuilderDef InstrBuilders::single = {
 
 const InstrBuilders::BuilderDef InstrBuilders::val_arg = {
     &InstrBuilders::parse_val_arg,
-    {Lexer::IDENTIFIER, Lexer::IDENTIFIER, Lexer::L_BRACKET, Lexer::NUMBER, Lexer::R_BRACKET, Lexer::END}
+    {
+        Lexer::IDENTIFIER, Lexer::IDENTIFIER,
+        Lexer::L_BRACKET, Lexer::NUMBER, Lexer::R_BRACKET,
+        Lexer::END
+    }
+};
+
+const InstrBuilders::BuilderDef InstrBuilders::label = {
+    &InstrBuilders::parse_label,
+    {Lexer::IDENTIFIER, Lexer::COLON, Lexer::END}
+};
+
+const InstrBuilders::BuilderDef InstrBuilders::id_arg = {
+    &InstrBuilders::parse_id_arg,
+    {Lexer::IDENTIFIER, Lexer::IDENTIFIER, Lexer::END}
 };
 
 auto InstrBuilders::get_func(const AVM::instr_mapping &m, const Lexer::tToken &token)
@@ -39,7 +53,7 @@ static AVM::instr_mapping get_mapping(const std::initializer_list<std::string> n
 }
 
 auto InstrBuilders::parse_single(const std::vector<Lexer::tToken> &tokens)
-    -> AVM::Instruction
+    -> parse_result
 {
     static const AVM::instr_mapping mapping = get_mapping({
         "pop", "dump", "add", "sub", "mul", "div", "mod", "print", "rot",
@@ -54,7 +68,7 @@ auto InstrBuilders::parse_single(const std::vector<Lexer::tToken> &tokens)
 }
 
 auto InstrBuilders::parse_val_arg(const std::vector<Lexer::tToken> &tokens)
-    -> AVM::Instruction
+    -> parse_result
 {
     static AVM::instr_mapping mapping = get_mapping({
         "push", "assert"
@@ -78,15 +92,40 @@ auto InstrBuilders::parse_val_arg(const std::vector<Lexer::tToken> &tokens)
     return p;
 }
 
-auto parse_line(std::string &line) -> std::optional<AVM::Instruction> {
+auto InstrBuilders::parse_label(const std::vector<Lexer::tToken> &tokens)
+    -> parse_result
+{
+    Label label;
+    label.name = tokens[0].value;
+    return label;
+}
+
+auto InstrBuilders::parse_id_arg(const std::vector<Lexer::tToken> &tokens)
+    -> parse_result
+{
+    static AVM::instr_mapping mapping = get_mapping({
+        "jmp", "je", "jne", "jlt", "jgt", "jlte", "jgte"
+    });
+
+    AVM::Instruction p{};
+
+    p.func = get_func(mapping, tokens[0]);
+    p.str_arg = tokens[1].value;
+
+    return p;
+}
+
+auto parse_line(std::string &line) -> parse_result {
     static const std::vector<const InstrBuilders::BuilderDef *> builders = {
         &InstrBuilders::single,
-        &InstrBuilders::val_arg
+        &InstrBuilders::val_arg,
+        &InstrBuilders::label,
+        &InstrBuilders::id_arg
     };
 
     auto tokens = Lexer::lex_line(line);
     if (tokens.size() == 1 && tokens[0].type == Lexer::END)
-        return std::nullopt;
+        return std::monostate{};
 
     std::vector<std::pair<bool, size_t>> matches;
     size_t match_count = 0;

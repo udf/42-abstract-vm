@@ -18,6 +18,13 @@ const AVM::instr_mapping AVM::instr_map{
     {"save", &AVM::save},
     {"load", &AVM::load},
     {"exit", &AVM::exit},
+    {"jmp", &AVM::jmp},
+    {"je", &AVM::je},
+    {"jne", &AVM::jne},
+    {"jlt", &AVM::jlt},
+    {"jgt", &AVM::jgt},
+    {"jlte", &AVM::jlte},
+    {"jgte", &AVM::jgte},
 };
 
 AVM::AVM() {
@@ -28,11 +35,21 @@ AVM::~AVM() {
 
 auto AVM::load_line(std::string &line, size_t line_number) -> void {
     try {
-        auto instruction = Parser::parse_line(line);
-        if (!instruction)
+        auto result = Parser::parse_line(line);
+        if (std::holds_alternative<std::monostate>(result))
             return;
-        this->instructions.push_back(std::move(instruction.value()));
-        this->instructions.back().line_number = line_number;
+        if (std::holds_alternative<Instruction>(result)) {
+            auto &instruction = std::get<Instruction>(result);
+            this->instructions.push_back(std::move(instruction));
+            this->instructions.back().line_number = line_number;
+        }
+        if (std::holds_alternative<Parser::Label>(result)) {
+            auto &label = std::get<Parser::Label>(result);
+            if (this->labels.count(label.name) > 0)
+                throw Exception(Parse, "Duplicate label")
+                    .set_hint(label.name);
+            this->labels[label.name] = this->instructions.size();
+        }
     } catch (Exception &e) {
         e.set_line(line_number);
         throw;
@@ -49,7 +66,7 @@ auto AVM::step() -> void {
     auto &instruction = this->instructions.at(this->instruction_ptr);
 
     this->instruction_ptr++;
-    this->instr_arg = instruction.arg.get();
+    this->cur_instr = &instruction;
     try {
         (this->*instruction.func)();
     } catch (Exception &e) {
@@ -64,14 +81,15 @@ auto AVM::run() -> void{
     }
 }
 
+
 auto AVM::_assert(bool condition, std::string info) -> void {
     if (!condition) {
         throw Exception(Runtime, info);
     }
 }
 
-template<typename F>
-auto AVM::do_binary_op(F f) -> void {
+template<typename T, typename F>
+auto AVM::do_binary_op(F f) -> T {
     _assert(
         this->stack.size() >= 2,
         "binary operation with less than two values on the stack"
@@ -82,8 +100,13 @@ auto AVM::do_binary_op(F f) -> void {
     it++;
     auto &left = *it;
 
+    return f(*left, *right);
+}
+
+template<typename F>
+auto AVM::do_math_op(F f) -> void {
     try {
-        auto result = f(*left, *right);
+        auto result = do_binary_op<operand_uptr::pointer>(f);
         this->stack.pop_back();
         this->stack.pop_back();
         this->stack.emplace_back(result);
@@ -93,8 +116,17 @@ auto AVM::do_binary_op(F f) -> void {
     }
 }
 
+template<typename F>
+auto AVM::do_jump_op(F f) -> void {
+    auto result = do_binary_op<bool>(f);
+    this->stack.pop_back();
+    if (result)
+        this->jmp();
+}
+
+
 auto AVM::push() -> void {
-    this->stack.emplace_back(instr_arg->clone());
+    this->stack.emplace_back(cur_instr->arg->clone());
 }
 
 auto AVM::pop() -> void {
@@ -116,32 +148,32 @@ auto AVM::dump() -> void {
 
 auto AVM::assert() -> void {
     _assert(!this->stack.empty(), "assert on empty stack");
-    if (*instr_arg == *stack.back())
+    if (cur_instr->arg->strict_equals(*stack.back()))
         return;
     std::string info = "Assertion error, expected \"";
-    info += instr_arg->toPrettyString() + "\" found";
+    info += cur_instr->arg->toPrettyString() + "\" found";
     throw Exception(Runtime, info)
         .set_hint(stack.back()->toPrettyString());
 }
 
 auto AVM::add() -> void {
-    this->do_binary_op<std::plus<>>();
+    this->do_math_op<std::plus<>>();
 }
 
 auto AVM::sub() -> void {
-    this->do_binary_op<std::minus<>>();
+    this->do_math_op<std::minus<>>();
 }
 
 auto AVM::mul() -> void {
-    this->do_binary_op<std::multiplies<>>();
+    this->do_math_op<std::multiplies<>>();
 }
 
 auto AVM::div() -> void {
-    this->do_binary_op<std::divides<>>();
+    this->do_math_op<std::divides<>>();
 }
 
 auto AVM::mod() -> void {
-    this->do_binary_op<std::modulus<>>();
+    this->do_math_op<std::modulus<>>();
 }
 
 auto AVM::print() -> void {
@@ -151,6 +183,11 @@ auto AVM::print() -> void {
     auto value = std::get<tOperandType<Int8>::type>(item.getValue());
     std::cout << static_cast<char>(value);
 }
+
+auto AVM::exit() -> void {
+    this->running = false;
+}
+
 
 auto AVM::rot() -> void {
     _assert(this->stack.size() >= 1, "rotate on empty stack");
@@ -176,8 +213,39 @@ auto AVM::load() -> void {
     this->stack.emplace_back(this->stored_val->clone());
 }
 
-auto AVM::exit() -> void {
-    this->running = false;
+
+auto AVM::jmp() -> void {
+    try {
+        this->instruction_ptr = this->labels.at(cur_instr->str_arg);
+    } catch (std::out_of_range) {
+        throw Exception(Runtime, "Jump to unknown label")
+            .set_hint(cur_instr->str_arg);
+    }
+};
+
+auto AVM::je() -> void {
+    this->do_jump_op<std::equal_to<>>();
 }
+
+auto AVM::jne() -> void {
+    this->do_jump_op<std::not_equal_to<>>();
+}
+
+auto AVM::jlt() -> void {
+    this->do_jump_op<std::less<>>();
+}
+
+auto AVM::jgt() -> void {
+    this->do_jump_op<std::greater<>>();
+}
+
+auto AVM::jlte() -> void {
+    this->do_jump_op<std::less_equal<>>();
+}
+
+auto AVM::jgte() -> void {
+    this->do_jump_op<std::greater_equal<>>();
+}
+
 
 } // namespace AVM

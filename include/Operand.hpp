@@ -25,9 +25,9 @@ constexpr auto is_one_of_vt() -> bool {
     return std::disjunction_v<std::is_same<T, typename Ts::T>...>;
 }
 
-template<typename F, typename V>
-auto var_op(const V &x, const V &y, F f = F()) -> V {
-    const auto visitor = [&f](auto x, auto y) -> V {
+template<typename R, typename F, typename V>
+auto var_op(const V &x, const V &y, F f = F()) -> R {
+    const auto visitor = [&f](auto x, auto y) -> R {
         using x_t = decltype(x);
 
         if constexpr (std::is_same_v<x_t, decltype(y)>) {
@@ -103,8 +103,10 @@ class Operand : public IOperand {
         return ENUM_TYPE;
     }
 
-    template<typename F>
-    auto operand(IOperand const &rhs, F f = F()) const -> IOperand const * {
+    template<typename R, typename F>
+    auto operation(IOperand const &rhs, F f = F()) const
+        -> std::pair<R, IOperand const *>
+    {
         operand_variant left = this->getValue();
         operand_variant right = rhs.getValue();
         IOperand const *factory = this;
@@ -115,28 +117,57 @@ class Operand : public IOperand {
             left = rhs.convertVariant(left);
             factory = &rhs;
         }
-        operand_variant result = var_op(left, right, f);
+        return std::make_pair(var_op<R>(left, right, f), factory);
+    }
 
+    template<typename F>
+    auto math_operation(IOperand const &rhs) const -> IOperand const * {
+        auto [result, factory] = operation<operand_variant, F>(rhs);
         return factory->createFromVariant(result);
     }
 
     auto operator+(IOperand const &rhs) const -> IOperand const * override {
-        return operand<std::plus<>>(rhs);
+        return math_operation<std::plus<>>(rhs);
     }
     auto operator-(IOperand const &rhs) const -> IOperand const * override {
-        return operand<std::minus<>>(rhs);
+        return math_operation<std::minus<>>(rhs);
     }
     auto operator*(IOperand const &rhs) const -> IOperand const * override {
-        return operand<std::multiplies<>>(rhs);
+        return math_operation<std::multiplies<>>(rhs);
     }
     auto operator/(IOperand const &rhs) const -> IOperand const * override {
-        return operand<divides<>>(rhs);
+        return math_operation<divides<>>(rhs);
     }
     auto operator%(IOperand const &rhs) const -> IOperand const * override {
-        return operand<modulus<>>(rhs);
+        return math_operation<modulus<>>(rhs);
+    }
+
+    template<typename F>
+    auto compare_operation(IOperand const &rhs) const -> bool {
+        auto [result, factory] = operation<bool, F>(rhs);
+        return result;
     }
 
     auto operator==(IOperand const &rhs) const -> bool override {
+        return compare_operation<std::equal_to<>>(rhs);
+    }
+    auto operator!=(IOperand const &rhs) const -> bool override {
+        return compare_operation<std::not_equal_to<>>(rhs);
+    }
+    auto operator<(IOperand const &rhs) const -> bool override {
+        return compare_operation<std::less<>>(rhs);
+    }
+    auto operator>(IOperand const &rhs) const -> bool override {
+        return compare_operation<std::greater<>>(rhs);
+    }
+    auto operator<=(IOperand const &rhs) const -> bool override {
+        return compare_operation<std::less_equal<>>(rhs);
+    }
+    auto operator>=(IOperand const &rhs) const -> bool override {
+        return compare_operation<std::greater_equal<>>(rhs);
+    }
+
+    auto strict_equals(IOperand const &rhs) const -> bool override {
         if (this->getType() != rhs.getType())
             return false;
         this_type const &rhs_t = static_cast<this_type const &>(rhs);

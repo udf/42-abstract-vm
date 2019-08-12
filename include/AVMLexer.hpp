@@ -15,6 +15,7 @@ enum eTokens {
     L_BRACKET,
     R_BRACKET,
     COMMENT_START,
+    COLON,
     END,
     _LENGTH
 };

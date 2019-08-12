@@ -30,6 +30,7 @@ class AVM {
         size_t line_number;
         instr_fptr func;
         operand_uptr arg;
+        std::string str_arg;
     };
     using instr_mapping = std::unordered_map<std::string, AVM::instr_fptr>;
     static const instr_mapping instr_map;
@@ -38,9 +39,15 @@ class AVM {
     AVM(const AVM &other) = delete;
     auto operator=(const AVM &other) -> AVM & = delete;
 
+
+    template<typename T, typename F>
+    auto do_binary_op(F f = F()) -> T;
     template<typename F>
-    auto do_binary_op(F f = F()) -> void;
+    auto do_math_op(F f = F()) -> void;
+    template<typename F>
+    auto do_jump_op(F f = F()) -> void;
     auto _assert(bool condition, std::string info) -> void;
+
 
     auto push() -> void;
     auto pop() -> void;
@@ -52,16 +59,27 @@ class AVM {
     auto div() -> void;
     auto mod() -> void;
     auto print() -> void;
+    auto exit() -> void;
+
     auto rot() -> void;
     auto save() -> void;
     auto load() -> void;
-    auto exit() -> void;
+
+    auto jmp() -> void;
+    auto je() -> void;
+    auto jne() -> void;
+    auto jlt() -> void;
+    auto jgt() -> void;
+    auto jlte() -> void;
+    auto jgte() -> void;
+
 
     std::vector<Instruction> instructions;
+    std::unordered_map<std::string, size_t> labels;
     size_t instruction_ptr = 0;
     operand_uptr stored_val;
 
-    IOperand const *instr_arg = nullptr;
+    const Instruction *cur_instr;
     std::list<operand_uptr> stack;
     bool running = true;
 };

@@ -76,8 +76,6 @@ class IOperandBase {
     virtual IOperand const *operator/(IOperand const &rhs) const = 0;
     virtual IOperand const *operator%(IOperand const &rhs) const = 0;
 
-    virtual bool operator==(IOperand const &rhs) const = 0;
-
     virtual std::string const &toString(void) const = 0;
 
     virtual ~IOperandBase(void) {
@@ -87,6 +85,15 @@ class IOperandBase {
 class IOperand : public IOperandBase {
   public:
     using operand_variant = operand_variant_impl<eOperandTypes>::type;
+
+    virtual bool operator==(IOperand const &rhs) const = 0;
+    virtual bool operator!=(IOperand const &rhs) const = 0;
+    virtual bool operator<(IOperand const &rhs) const = 0;
+    virtual bool operator>(IOperand const &rhs) const = 0;
+    virtual bool operator<=(IOperand const &rhs) const = 0;
+    virtual bool operator>=(IOperand const &rhs) const = 0;
+
+    virtual bool strict_equals(IOperand const &rhs) const = 0;
 
     virtual std::string toPrettyString() const = 0;
 
