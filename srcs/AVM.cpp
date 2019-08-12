@@ -162,7 +162,7 @@ auto AVM::rot() -> void {
     list_rotate(
         this->stack,
         static_cast<size_t>(std::abs(count)),
-        count < 0
+        count > 0
     );
 }
 
