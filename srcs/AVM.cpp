@@ -291,7 +291,7 @@ auto AVM::dbg() -> void {
         std::cout << (*it)->toString();
         if (*it == stack.back())
             std::cout << ']';
-        const long n = 5;
+        const long n = 3;
         if (i == n || (i - n) % 10 == 0) {
             std::cout << std::endl;
             return;

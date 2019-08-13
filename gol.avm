@@ -1,10 +1,6 @@
 ; debug marker
 push int32(-420)
 
-; height, width
-push int32(10)
-push int32(10)
-
 ; current y, x
 push int32(9)
 push int32(6)
@@ -129,13 +125,12 @@ rot
 
 
 ; reset neighbour counter
-push int32(5)
+push int32(3)
 rot
 pop
 push int32(0)
-push int32(-5)
+push int32(-3)
 rot
-
 
 ; add y+1,x to the neighbour counter
 call logic1
@@ -219,12 +214,21 @@ push int32(1)
 rot
 dbg
 
+
 exit
+
+width:
+push int32(10)
+ret
+
+height:
+push int32(10)
+ret
 
 logic1:
 assert int32(-420)
 ; copy current y
-push int32(3)
+push int32(1)
 rot
 save
 push int32(2)
@@ -233,6 +237,16 @@ load
 ret
 
 logic2:
+; add height so y is always positive
+call height
+save
+add
+; mod y by height (wraparound)
+load
+mod
+; multiply y by width
+call width
+mul
 ; copy current x
 push int32(-2)
 rot
@@ -240,37 +254,19 @@ save
 push int32(2)
 rot
 load
-; multiply y by height
-push int32(-5)
-rot
-save
-push int32(4)
-rot
-load ;add height so y always stays positive
-add
-; mod by height (for wraparound)
-load
-mod
-load
-mul
-push int32(1)
-rot
 ret
 
 logic3:
-; mod x by width
-push int32(-5)
-rot
+; add width so x is always positive
+call width
 save
-push int32(5)
-rot
-load ;add width so x always stays positive
 add
+; mod x by width
 load
 mod
-; add x (y * h + x)
+; add x to (y * w)
 add
-; save this value
+;save this value
 save
 pop
 ; jump to beginning of cells
@@ -300,6 +296,6 @@ ret
 
 logic4:
 ; go back to the marker
-push int32(-5)
+push int32(-3)
 rot
 ret
