@@ -1,0 +1,305 @@
+; debug marker
+push int32(-420)
+
+; height, width
+push int32(10)
+push int32(10)
+
+; current y, x
+push int32(9)
+push int32(6)
+
+; neighbour count
+push int32(0)
+
+; data
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(1)
+push int8(0)
+push int8(0)
+push int8(0)
+
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(1)
+push int8(0)
+push int8(0)
+push int8(0)
+
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0) ;
+push int8(0)
+push int8(0)
+push int8(0)
+
+; rotate to marker
+push int32(1)
+rot
+
+
+; reset neighbour counter
+push int32(5)
+rot
+pop
+push int32(0)
+push int32(-5)
+rot
+
+
+; add y+1,x to the neighbour counter
+call logic1
+push int32(1)
+add
+call logic2
+call logic3
+add
+call logic4
+
+; add y-1,x to the neighbour counter
+call logic1
+push int32(1)
+sub
+call logic2
+call logic3
+add
+call logic4
+
+; add y,x+1 to the neighbour counter
+call logic1
+call logic2
+push int32(1)
+add
+call logic3
+add
+call logic4
+
+; add y,x-1 to the neighbour counter
+call logic1
+call logic2
+push int32(1)
+sub
+call logic3
+add
+call logic4
+
+; copy the current cell after the neighbour counter
+call logic1
+call logic2
+call logic3
+
+push int32(0)
+je on_dead
+jmp on_alive
+
+on_dead:
+; remove cell
+pop
+; if ncount == 3
+push int32(3)
+je set_alive
+jmp set_dead
+
+on_alive:
+; remove cell
+pop
+; if ncount < 2 (ncount == {0, 1})
+push int32(2)
+jlt set_dead
+; if ncount > 3 (ncount == {3, 4})
+push int32(3)
+jgt set_dead
+; if ncount == {2,3}
+
+set_alive:
+push int32(1)
+save
+pop
+jmp store_cell
+set_dead:
+push int32(0)
+save
+pop
+
+store_cell:
+push int32(-6)
+rot
+load
+push int32(1)
+rot
+dbg
+
+exit
+
+logic1:
+assert int32(-420)
+; copy current y
+push int32(3)
+rot
+save
+push int32(2)
+rot
+load
+ret
+
+logic2:
+; copy current x
+push int32(-2)
+rot
+save
+push int32(2)
+rot
+load
+; multiply y by height
+push int32(-5)
+rot
+save
+push int32(4)
+rot
+load ;add height so y always stays positive
+add
+; mod by height (for wraparound)
+load
+mod
+load
+mul
+push int32(1)
+rot
+ret
+
+logic3:
+; mod x by width
+push int32(-5)
+rot
+save
+push int32(5)
+rot
+load ;add width so x always stays positive
+add
+load
+mod
+; add x (y * h + x)
+add
+; save this value
+save
+pop
+; jump to beginning of cells
+push int32(1)
+rot
+; jump to the cell
+load
+rot
+; load and invert the offset so we know how to get back
+load
+push int32(-1)
+mul
+push int32(-1)
+rot
+; save the cell value
+save
+; go back to the beginning
+push int32(1)
+rot
+rot
+; go to the cell count
+push int32(-1)
+rot
+; add the saved cell to the counter
+load
+ret
+
+logic4:
+; go back to the marker
+push int32(-5)
+rot
+ret
