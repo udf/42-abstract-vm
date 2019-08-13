@@ -173,9 +173,8 @@ call logic1
 call logic2
 call logic3
 
-push int32(0)
-je on_dead
-jmp on_alive
+push int32(1)
+je on_alive
 
 on_dead:
 ; remove cell
