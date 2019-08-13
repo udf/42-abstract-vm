@@ -284,8 +284,9 @@ auto AVM::dbg() -> void {
     _assert(m_it != stack.end(), "Failed to find marker value");
 
     long i = 0;
+    long nl = 0;
 
-    auto print = [this, &i](decltype(m_it) &it) {
+    auto print = [this, &i, &nl](decltype(m_it) &it) {
         if (*it == stack.back())
             std::cout << '[';
         std::cout << (*it)->toString();
@@ -294,6 +295,9 @@ auto AVM::dbg() -> void {
         const long n = 3;
         if (i == n || (i - n) % 10 == 0) {
             std::cout << std::endl;
+            if (nl % 10 == 0)
+                std::cout << std::endl;
+            nl++;
             return;
         }
         std::cout << ' ';

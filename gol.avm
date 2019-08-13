@@ -15,50 +15,6 @@ push int8(0)
 push int8(0)
 push int8(0)
 push int8(0)
-push int8(1)
-push int8(0)
-push int8(0)
-push int8(0)
-
-push int8(0)
-push int8(0)
-push int8(0)
-push int8(0)
-push int8(0)
-push int8(0)
-push int8(0)
-push int8(0)
-push int8(0)
-push int8(0)
-
-push int8(0)
-push int8(0)
-push int8(0)
-push int8(0)
-push int8(0)
-push int8(0)
-push int8(0)
-push int8(0)
-push int8(0)
-push int8(0)
-
-push int8(0)
-push int8(0)
-push int8(0)
-push int8(0)
-push int8(0)
-push int8(0)
-push int8(0)
-push int8(0)
-push int8(0)
-push int8(0)
-
-push int8(0)
-push int8(0)
-push int8(0)
-push int8(0)
-push int8(0)
-push int8(0)
 push int8(0)
 push int8(0)
 push int8(0)
@@ -112,9 +68,53 @@ push int8(0)
 push int8(0)
 push int8(0)
 push int8(0)
+push int8(1)
+push int8(0)
+push int8(1)
 push int8(0)
 push int8(0)
-push int8(0) ;
+push int8(0)
+
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(1)
+push int8(1)
+push int8(0)
+push int8(0)
+push int8(0)
+
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
+push int8(0)
 push int8(0)
 push int8(0)
 push int8(0)
@@ -168,9 +168,11 @@ je loop_start
 assert float(0) ;should never happen
 
 loop_end:
+; TODO: remove/print and restart
 dbg
 
 exit
+
 
 do_cell_logic:
 ; reset neighbour counter
@@ -187,7 +189,6 @@ push int32(1)
 add
 call logic2
 call logic3
-add
 call logic4
 
 ; add y-1,x to the neighbour counter
@@ -196,7 +197,6 @@ push int32(1)
 sub
 call logic2
 call logic3
-add
 call logic4
 
 ; add y,x+1 to the neighbour counter
@@ -205,7 +205,6 @@ call logic2
 push int32(1)
 add
 call logic3
-add
 call logic4
 
 ; add y,x-1 to the neighbour counter
@@ -214,7 +213,46 @@ call logic2
 push int32(1)
 sub
 call logic3
+call logic4
+
+; add y-1,x-1 to the neighbour counter
+call logic1
+push int32(1)
+sub
+call logic2
+push int32(1)
+sub
+call logic3
+call logic4
+
+; add y+1,x-1 to the neighbour counter
+call logic1
+push int32(1)
 add
+call logic2
+push int32(1)
+sub
+call logic3
+call logic4
+
+; add y-1,x+1 to the neighbour counter
+call logic1
+push int32(1)
+sub
+call logic2
+push int32(1)
+add
+call logic3
+call logic4
+
+; add y+1,x+1 to the neighbour counter
+call logic1
+push int32(1)
+add
+call logic2
+push int32(1)
+add
+call logic3
 call logic4
 
 ; copy the current cell after the neighbour counter
@@ -239,7 +277,7 @@ pop
 ; if ncount < 2 (ncount == {0, 1})
 push int32(2)
 jlt set_dead
-; if ncount > 3 (ncount == {3, 4})
+; if ncount > 3 (ncount == {4, 5, 6, 7, 8})
 push int32(3)
 jgt set_dead
 ; if ncount == {2,3}
@@ -340,12 +378,14 @@ rot
 ; go to the cell count
 push int32(-1)
 rot
-; add the saved cell to the counter
+; load the saved cell next to the counter
 load
 ret
 
 
 logic4:
+; add the saved cell to the counter
+add
 ; go back to the marker
 push int32(-3)
 rot
