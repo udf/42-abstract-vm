@@ -18,6 +18,8 @@ void list_rotate(
     size_t count,
     bool from_front
 ) {
+    if (list.size() == 0)
+        return;
     count = count % list.size();
     if (count == 0)
         return;
