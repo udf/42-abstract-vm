@@ -77,6 +77,9 @@ class AVM {
     auto call() -> void;
     auto ret() -> void;
 
+    auto dbg() -> void;
+
+
     std::vector<Instruction> instructions;
     std::unordered_map<std::string, size_t> labels;
     size_t instruction_ptr = 0;

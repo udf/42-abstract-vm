@@ -27,6 +27,7 @@ const AVM::instr_mapping AVM::instr_map{
     {"jgte", &AVM::jgte},
     {"call", &AVM::call},
     {"ret", &AVM::ret},
+    {"dbg", &AVM::dbg},
 };
 
 AVM::AVM() {
@@ -266,6 +267,47 @@ auto AVM::ret() -> void {
     _assert(this->call_stack.size() >= 1, "Return on empty call stack");
     this->instruction_ptr = this->call_stack.back();
     this->call_stack.pop_back();
+}
+
+auto AVM::dbg() -> void {
+    static const auto marker = AVM::operand_uptr(
+        OperandFactory().createOperand(Int32, "-420")
+    );
+
+    // find the marker value
+    auto m_it = stack.begin();
+    for (; m_it != stack.end(); m_it++) {
+        if (**m_it == *marker)
+            break;
+    }
+
+    _assert(m_it != stack.end(), "Failed to find marker value");
+
+    long i = 0;
+
+    auto print = [this, &i](decltype(m_it) &it) {
+        if (*it == stack.back())
+            std::cout << '[';
+        std::cout << (*it)->toString();
+        if (*it == stack.back())
+            std::cout << ']';
+        const long n = 5;
+        if (i == n || (i - n) % 10 == 0) {
+            std::cout << std::endl;
+            return;
+        }
+        std::cout << ' ';
+    };
+
+    for (auto it = m_it; it != stack.end(); it++) {
+        print(it);
+        i++;
+    }
+    for (auto it = stack.begin(); it != m_it; it++) {
+        print(it);
+        i++;
+    }
+    std::cout << std::endl;
 }
 
 } // namespace AVM
