@@ -2,8 +2,8 @@
 push int32(-420)
 
 ; current y, x
-push int32(9)
-push int32(6)
+push int32(0)
+push int32(0)
 
 ; neighbour count
 push int32(0)
@@ -123,7 +123,56 @@ push int8(0)
 push int32(1)
 rot
 
+loop_start:
 
+call do_cell_logic
+
+; rotate to x
+push int32(2)
+rot
+; increment x
+push int32(1)
+add
+
+; x < width
+call width
+jlt loop_restart
+
+; x = 0
+pop
+push int32(0)
+; increment y
+push int32(-1)
+rot
+push int32(1)
+add
+
+; y < height
+call height
+jlt loop_restart
+
+; y = 0
+pop
+push int32(0)
+jmp loop_end
+
+loop_restart:
+push int32(-1)
+rot
+push int32(-420)
+je loop_start
+push int32(-1)
+rot
+push int32(-420)
+je loop_start
+assert float(0) ;should never happen
+
+loop_end:
+dbg
+
+exit
+
+do_cell_logic:
 ; reset neighbour counter
 push int32(3)
 rot
@@ -176,7 +225,7 @@ call logic3
 push int32(1)
 je on_alive
 
-on_dead:
+;on_dead
 ; remove cell
 pop
 ; if ncount == 3
@@ -206,23 +255,23 @@ save
 pop
 
 store_cell:
-push int32(-6)
+push int32(-4)
 rot
 load
 push int32(1)
 rot
-dbg
+ret
 
-
-exit
 
 width:
 push int32(10)
 ret
 
+
 height:
 push int32(10)
 ret
+
 
 logic1:
 assert int32(-420)
@@ -234,6 +283,7 @@ push int32(2)
 rot
 load
 ret
+
 
 logic2:
 ; add height so y is always positive
@@ -254,6 +304,7 @@ push int32(2)
 rot
 load
 ret
+
 
 logic3:
 ; add width so x is always positive
@@ -292,6 +343,7 @@ rot
 ; add the saved cell to the counter
 load
 ret
+
 
 logic4:
 ; go back to the marker
