@@ -13,11 +13,11 @@ auto first_diff(std::vector<T> s1, std::vector<U> s2, F func) -> size_t {
 }
 
 template<typename T>
-void list_rotate(
+auto list_rotate(
     std::list<T> &list,
     size_t count,
     bool from_front
-) {
+) -> void {
     if (list.size() == 0)
         return;
     count = count % list.size();
