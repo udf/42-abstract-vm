@@ -168,10 +168,86 @@ je loop_start
 assert float(0) ;should never happen
 
 loop_end:
-; TODO: remove/print and restart
-dbg
+; jump to old cells
+push int32(3)
+rot
 
-exit
+; save w*h
+call width
+call height
+mul
+save
+
+; clear screen
+push int8(27) ; ESC
+print
+pop
+push int8(99) ; c
+print
+pop
+
+print_loop:
+; pop counter
+pop
+
+; print cell
+push int32(1)
+je print_1
+; print_0
+push int8(45) ; -
+print
+pop
+jmp print_loop_cont
+
+print_1:
+push int8(73) ; I
+print
+pop
+
+print_loop_cont:
+push int8(32)
+print
+pop
+
+; pop cell
+pop
+
+; newline if (i - 1) % w == 0
+load
+push int32(1)
+sub
+call width
+mod
+push int32(0)
+jne print_loop_end
+push int8(10)
+print
+pop
+
+print_loop_end:
+; pop temp
+pop
+push int32(1)
+rot
+
+load
+push int32(1)
+sub
+save
+
+push int32(0)
+jne print_loop
+
+; pop counter
+pop
+
+; jump to marker
+
+push int32(-4)
+rot
+
+jmp loop_start
+
 
 
 do_cell_logic:
