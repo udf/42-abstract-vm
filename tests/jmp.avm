@@ -1,0 +1,21 @@
+; counter
+push int32(0)
+
+start:
+; A
+push int8(65)
+print
+pop
+
+push int32(1)
+add
+
+push int32(100)
+jlt start
+
+
+; !
+push int8(33)
+print
+
+exit
