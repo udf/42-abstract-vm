@@ -7,7 +7,7 @@ const AVM::instr_mapping AVM::instr_map{
     {"push", &AVM::push},
     {"pop", &AVM::pop},
     {"dump", &AVM::dump},
-    {"assert", &AVM::assert},
+    {"assert", &AVM::assert_v},
     {"add", &AVM::add},
     {"sub", &AVM::sub},
     {"mul", &AVM::mul},
@@ -156,7 +156,7 @@ auto AVM::dump() -> void {
     }
 }
 
-auto AVM::assert() -> void {
+auto AVM::assert_v() -> void {
     _assert(!this->stack.empty(), "assert on empty stack");
     if (cur_instr->arg->strict_equals(*stack.back()))
         return;

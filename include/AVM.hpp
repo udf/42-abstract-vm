@@ -53,7 +53,7 @@ class AVM {
     auto push() -> void;
     auto pop() -> void;
     auto dump() -> void;
-    auto assert() -> void;
+    auto assert_v() -> void;
     auto add() -> void;
     auto sub() -> void;
     auto mul() -> void;
