@@ -1,10 +1,12 @@
 #pragma once
 
+#include <chrono>
 #include <iostream>
-#include <memory>
-#include <vector>
 #include <list>
+#include <memory>
+#include <thread>
 #include <unordered_map>
+#include <vector>
 
 #include "util.hpp"
 #include "IOperand.hpp"
@@ -77,7 +79,7 @@ class AVM {
     auto call() -> void;
     auto ret() -> void;
 
-    auto dbg() -> void;
+    auto sleep() -> void;
 
 
     std::vector<Instruction> instructions;

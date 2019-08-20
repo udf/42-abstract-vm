@@ -27,7 +27,7 @@ const AVM::instr_mapping AVM::instr_map{
     {"jgte", &AVM::jgte},
     {"call", &AVM::call},
     {"ret", &AVM::ret},
-    {"dbg", &AVM::dbg},
+    {"sleep", &AVM::sleep},
 };
 
 AVM::AVM() {
@@ -269,49 +269,15 @@ auto AVM::ret() -> void {
     this->call_stack.pop_back();
 }
 
-auto AVM::dbg() -> void {
-    static const auto marker = AVM::operand_uptr(
-        OperandFactory().createOperand(Int32, "-420")
-    );
+auto AVM::sleep() -> void {
+    _assert(this->stack.size() >= 1, "sleep on empty stack");
+    auto &item = *this->stack.back();
+    _assert(item.getType() == Int32, "sleep on non int32 variable");
 
-    // find the marker value
-    auto m_it = stack.begin();
-    for (; m_it != stack.end(); m_it++) {
-        if (**m_it == *marker)
-            break;
-    }
+    auto ms = std::get<tOperandType<Int32>::type>(item.getValue());
+    this->stack.pop_back();
 
-    _assert(m_it != stack.end(), "Failed to find marker value");
-
-    long i = 0;
-    long nl = 0;
-
-    auto print = [this, &i, &nl](decltype(m_it) &it) {
-        if (*it == stack.back())
-            std::cout << '[';
-        std::cout << (*it)->toString();
-        if (*it == stack.back())
-            std::cout << ']';
-        const long n = 3;
-        if (i == n || (i - n) % 10 == 0) {
-            std::cout << std::endl;
-            if (nl % 10 == 0)
-                std::cout << std::endl;
-            nl++;
-            return;
-        }
-        std::cout << ' ';
-    };
-
-    for (auto it = m_it; it != stack.end(); it++) {
-        print(it);
-        i++;
-    }
-    for (auto it = stack.begin(); it != m_it; it++) {
-        print(it);
-        i++;
-    }
-    std::cout << std::endl;
+    std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
 
 } // namespace AVM

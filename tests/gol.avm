@@ -246,6 +246,8 @@ pop
 push int32(-4)
 rot
 
+push int32(100)
+sleep
 jmp loop_start
 
 
