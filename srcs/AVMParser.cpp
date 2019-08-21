@@ -179,9 +179,9 @@ auto parse_line(std::string &line) -> parse_result {
         info += ',';
     }
     info.pop_back();
-    info += " after";
+    info += longest_match == 0 ? " at" : " after";
 
-    const Lexer::tToken &last_token = tokens[longest_match - 1];
+    const Lexer::tToken &last_token = tokens[longest_match > 0 ? longest_match - 1 : 0];
     throw Exception(Parse, info)
         .set_hint(last_token.value)
         .set_column(last_token.col_pos + last_token.value.size());
