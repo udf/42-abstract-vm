@@ -180,33 +180,33 @@ save
 
 ; clear screen
 push int8(27) ; ESC
-print
+putchar
 pop
 push int8(99) ; c
-print
+putchar
 pop
 
-print_loop:
+putchar_loop:
 ; pop counter
 pop
 
-; print cell
+; putchar cell
 push int32(1)
-je print_1
-; print_0
+je putchar_1
+; putchar_0
 push int8(45) ; -
-print
+putchar
 pop
-jmp print_loop_cont
+jmp putchar_loop_cont
 
-print_1:
+putchar_1:
 push int8(73) ; I
-print
+putchar
 pop
 
-print_loop_cont:
+putchar_loop_cont:
 push int8(32)
-print
+putchar
 pop
 
 ; pop cell
@@ -219,12 +219,12 @@ sub
 call width
 mod
 push int32(0)
-jne print_loop_end
+jne putchar_loop_end
 push int8(10)
-print
+putchar
 pop
 
-print_loop_end:
+putchar_loop_end:
 ; pop temp
 pop
 push int32(1)
@@ -236,7 +236,7 @@ sub
 save
 
 push int32(0)
-jne print_loop
+jne putchar_loop
 
 ; pop counter
 pop
@@ -248,6 +248,7 @@ rot
 
 push int32(100)
 sleep
+exit
 jmp loop_start
 
 

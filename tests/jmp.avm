@@ -4,7 +4,7 @@ push int32(0)
 start:
 ; A
 push int8(65)
-print
+putchar
 pop
 
 push int32(1)

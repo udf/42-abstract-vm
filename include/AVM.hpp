@@ -80,6 +80,7 @@ class AVM {
     auto ret() -> void;
 
     auto sleep() -> void;
+    auto putchar() -> void;
 
 
     std::vector<Instruction> instructions;

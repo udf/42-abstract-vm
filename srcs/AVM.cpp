@@ -28,6 +28,7 @@ const AVM::instr_mapping AVM::instr_map{
     {"call", &AVM::call},
     {"ret", &AVM::ret},
     {"sleep", &AVM::sleep},
+    {"putchar", &AVM::putchar},
 };
 
 AVM::AVM() {
@@ -187,6 +188,14 @@ auto AVM::mod() -> void {
 }
 
 auto AVM::print() -> void {
+    _assert(this->stack.size() >= 1, "print on empty stack");
+    auto &item = *this->stack.back();
+    _assert(item.getType() == Int8, "print on non int8 variable");
+    auto value = std::get<tOperandType<Int8>::type>(item.getValue());
+    std::cout << static_cast<char>(value) << std::endl;
+}
+
+auto AVM::putchar() -> void {
     _assert(this->stack.size() >= 1, "print on empty stack");
     auto &item = *this->stack.back();
     _assert(item.getType() == Int8, "print on non int8 variable");
