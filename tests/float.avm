@@ -1,5 +1,20 @@
 push float(1.1)
 push float(.1)
 push float(-.1)
+push float(1.)
+push float(-1.)
+
 dump
+
+assert float(-1.0)
+pop
+assert float(1.0)
+pop
+assert float(-0.1)
+pop
+assert float(0.1)
+pop
+assert float(1.1)
+pop
+
 exit
