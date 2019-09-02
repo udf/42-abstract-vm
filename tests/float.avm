@@ -1,0 +1,5 @@
+push float(1.1)
+push float(.1)
+push float(-.1)
+dump
+exit

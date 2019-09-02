@@ -16,7 +16,7 @@ const char *sTokenNames[eTokens::_LENGTH] = {
 const std::array<std::regex, eTokens::_LENGTH> rTokens = {
     std::regex(R"(^\s+)"),
     std::regex(R"(^[a-zA-Z]\w*)"),
-    std::regex(R"(^-?\d+\.?)"),
+    std::regex(R"(^-?(?:\d+\.?\d*|\.\d+))"),
     std::regex(R"(^\()"),
     std::regex(R"(^\))"),
     std::regex(R"(^;)"),
